@@ -1,0 +1,73 @@
+#pragma once
+#include "StageControl.h"
+#define IP_ADDRESS "10.10.10.100"
+#include "ACSC.h"
+#include <iostream>
+
+StageControl::StageControl() {
+  int port = 701;
+  handle = (HANDLE)-1;
+  handle = acsc_OpenCommEthernetTCP(_strdup(IP_ADDRESS), port);
+  if (handle == ACSC_INVALID) {
+    std::cout << "Failed to connect to stage controller" << std::endl;
+    acsc_GetLastError();
+  }
+}
+
+void StageControl::moveAbsolute(double x, double y, double z, int flags) {
+  int axes[] = {ACSC_AXIS_0, ACSC_AXIS_1, ACSC_AXIS_2, -1};
+  double positions[] = {x, y, z};
+  if (!acsc_ToPointM(handle, 0, axes, positions, ACSC_SYNCHRONOUS)) {
+    std::cout << "Failed to move stage to absolute position" << std::endl;
+    std::cout << acsc_GetLastError();
+  }
+}
+
+double *StageControl::getStagePosition() {
+  double x_pos, y_pos, z_pos;
+  int result = 0;
+  result += acsc_GetFPosition(handle, ACSC_AXIS_0, &x_pos, ACSC_SYNCHRONOUS);
+  result += acsc_GetFPosition(handle, ACSC_AXIS_1, &y_pos, ACSC_SYNCHRONOUS);
+  result += acsc_GetFPosition(handle, ACSC_AXIS_2, &z_pos, ACSC_SYNCHRONOUS);
+  if (result == 0) {
+    std::cout << "Failed to get stage position" << std::endl;
+    acsc_GetLastError();
+  }
+  double *positions = new double[3];
+  positions[0] = x_pos;
+  positions[1] = y_pos;
+  positions[2] = z_pos;
+  return positions;
+}
+
+void StageControl::moveRelative(double x, double y, double z) {
+  double* pos = this->getStagePosition();
+  x += pos[0];
+  y += pos[1];
+  z += pos[2];
+  StageControl::moveAbsolute(x, y, z);
+}
+
+void StageControl::reconnect() {
+  int port = 703;
+  handle = (HANDLE)-1;
+  handle = acsc_OpenCommEthernetTCP(_strdup(IP_ADDRESS), port);
+  if (handle == ACSC_INVALID) {
+    std::cout << "Failed to reconnect to stage controller" << std::endl;
+    acsc_GetLastError();
+  }
+}
+
+void StageControl::jogMotion(int axis, double velocity) {
+  acsc_Jog(handle, 0, axis, velocity, ACSC_SYNCHRONOUS);
+}
+
+void StageControl::stopJogMotion(int axis) {
+    acsc_Kill(handle, axis, ACSC_SYNCHRONOUS);
+}
+
+void StageControl::setVelocity(double velocity) {
+    acsc_SetVelocity(handle, 0, velocity, ACSC_SYNCHRONOUS);
+}
+
+StageControl::~StageControl() { acsc_CloseComm(handle); }
