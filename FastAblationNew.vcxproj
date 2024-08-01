@@ -18,6 +18,27 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\DAQControl.cpp" />
+    <ClCompile Include="src\FastAblationNew.cpp" />
+    <ClCompile Include="src\GalvoControl.cpp" />
+    <ClCompile Include="src\LaserControl.cpp" />
+    <ClCompile Include="src\StageControl.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\ACSC.h" />
+    <ClInclude Include="include\cbw.h" />
+    <ClInclude Include="src\DAQControl.h" />
+    <ClInclude Include="src\GalvoControl.h" />
+    <ClInclude Include="src\LaserControl.h" />
+    <ClInclude Include="src\StageControl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\ACSCL_x64.LIB" />
+    <Library Include="lib\ACSCL_x86.LIB" />
+    <Library Include="lib\cbw32.lib" />
+    <Library Include="lib\cbw64.lib" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -126,27 +147,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="DAQ\DAQControl.cpp" />
-    <ClCompile Include="FastAblationNew.cpp" />
-    <ClCompile Include="GalvoControl.cpp" />
-    <ClCompile Include="LaserControl.cpp" />
-    <ClCompile Include="StageControl.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ACSC.h" />
-    <ClInclude Include="DAQ\DAQControl.h" />
-    <ClInclude Include="DAQ\include\cbw.h" />
-    <ClInclude Include="GalvoControl.h" />
-    <ClInclude Include="LaserControl.h" />
-    <ClInclude Include="StageControl.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ACSCL_x64.LIB" />
-    <Library Include="ACSCL_x86.LIB" />
-    <Library Include="DAQ\cbw32.lib" />
-    <Library Include="DAQ\cbw64.lib" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

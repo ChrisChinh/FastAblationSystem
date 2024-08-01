@@ -1,5 +1,5 @@
 #pragma once
-#include "DAQ/DAQControl.h"
+#include "DAQControl.h"
 #define MAX_VOLTAGE 2.5
 class LaserControl
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "DAQ/DAQControl.h"
+#include "DAQControl.h"
 class GalvoControl
 {
 	public:

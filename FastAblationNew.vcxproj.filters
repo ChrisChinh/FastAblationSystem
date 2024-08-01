@@ -15,53 +15,53 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FastAblationNew.cpp">
+    <ClCompile Include="src\DAQControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DAQ\DAQControl.cpp">
+    <ClCompile Include="src\FastAblationNew.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StageControl.cpp">
+    <ClCompile Include="src\GalvoControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LaserControl.cpp">
+    <ClCompile Include="src\LaserControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GalvoControl.cpp">
+    <ClCompile Include="src\StageControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StageControl.h">
+    <ClInclude Include="src\DAQControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ACSC.h">
+    <ClInclude Include="src\GalvoControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DAQ\DAQControl.h">
+    <ClInclude Include="src\LaserControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DAQ\include\cbw.h">
+    <ClInclude Include="src\StageControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LaserControl.h">
+    <ClInclude Include="include\ACSC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GalvoControl.h">
+    <ClInclude Include="include\cbw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="ACSCL_x64.LIB">
+    <Library Include="lib\ACSCL_x64.LIB">
       <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="ACSCL_x86.LIB">
+    <Library Include="lib\ACSCL_x86.LIB">
       <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="DAQ\cbw64.lib">
+    <Library Include="lib\cbw32.lib">
       <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="DAQ\cbw32.lib">
+    <Library Include="lib\cbw64.lib">
       <Filter>Resource Files</Filter>
     </Library>
   </ItemGroup>

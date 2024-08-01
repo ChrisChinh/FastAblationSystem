@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "include/cbw.h"
+#include "../include/cbw.h"
 
 class DAQControl
 {
