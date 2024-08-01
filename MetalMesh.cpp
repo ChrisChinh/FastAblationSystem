@@ -82,8 +82,8 @@ void MetalMesh::drawSquare(double h_init, double v_init, double width, double he
 }
 
 void MetalMesh::drawCross(double h, double v) {
-	double length = parameters["cross_length"] - parameters["kerf"];
-	double width = parameters["cross_width"] - parameters["kerf"];
+	double length = parameters["square_length"] - parameters["kerf"];
+	double width = parameters["square_width"] - parameters["kerf"];
 
 	this->drawSquare(h, v);
 	this->drawSquare(h, v, length, width);

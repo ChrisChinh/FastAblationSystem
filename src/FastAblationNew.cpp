@@ -28,7 +28,8 @@ enum string_code {
 	EXPERIMENT,
 	KEYBOARD,
 	INVALID,
-	TEST
+	TEST,
+	LASER
 };
 
 string_code hash_string(string const& inString) {
@@ -37,6 +38,7 @@ string_code hash_string(string const& inString) {
 	if (inString == "e") return EXPERIMENT;
 	if (inString == "k") return KEYBOARD;
 	if (inString == "t") return TEST;
+	if (inString == "l") return LASER;
 	return INVALID;
 }
 
@@ -54,6 +56,7 @@ int main() {
 			cout << "q: Quit" << endl;
 			cout << "e: Experiment (run an experiment)" << endl;
 			cout << "k: Keyboard (run keyboard control)" << endl;
+			cout << "t: Test (run test code)" << endl;
 			break;
 
 		case QUIT:
@@ -71,6 +74,19 @@ int main() {
 		case TEST:
 			cout << "running test code" << endl;
 			test();
+			break;
+
+		case LASER:
+			cout << "Enter new voltage: ";
+			double voltage;
+			cin >> voltage;
+			laser.setVoltage(voltage);
+			cout << "Enter laser state (0 for off, 1 for on): ";
+			int state;
+			cin >> state;
+			if (state == 0) laser.closeGate();
+			else if (state == 1) laser.openGate();
+			else cout << "Invalid state" << endl;
 			break;
 
 		default:
@@ -146,6 +162,6 @@ void test() {
 	cin >> kerf;
 	mesh.setParameter("kerf", kerf);
 	mesh.setParameter("square_length", 100);
-	mesh.setParameter("square_width", 100);
-	mesh.drawSquare(0, 0);
+	mesh.setParameter("square_width", 30);
+	mesh.drawCross(0, 0);
 }
