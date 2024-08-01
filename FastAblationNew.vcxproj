@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MetalMesh.cpp" />
     <ClCompile Include="src\DAQControl.cpp" />
     <ClCompile Include="src\FastAblationNew.cpp" />
     <ClCompile Include="src\GalvoControl.cpp" />
@@ -28,6 +29,7 @@
   <ItemGroup>
     <ClInclude Include="include\ACSC.h" />
     <ClInclude Include="include\cbw.h" />
+    <ClInclude Include="MetalMesh.h" />
     <ClInclude Include="src\DAQControl.h" />
     <ClInclude Include="src\GalvoControl.h" />
     <ClInclude Include="src\LaserControl.h" />

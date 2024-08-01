@@ -59,6 +59,7 @@ void StageControl::reconnect() {
 }
 
 void StageControl::jogMotion(int axis, double velocity) {
+  this->setVelocity(velocity);
   acsc_Jog(handle, 0, axis, velocity, ACSC_SYNCHRONOUS);
 }
 
@@ -68,6 +69,8 @@ void StageControl::stopJogMotion(int axis) {
 
 void StageControl::setVelocity(double velocity) {
     acsc_SetVelocity(handle, 0, velocity, ACSC_SYNCHRONOUS);
+    acsc_SetVelocity(handle, 1, velocity, ACSC_SYNCHRONOUS);
+    acsc_SetVelocity(handle, 2, velocity / 8.0, ACSC_SYNCHRONOUS);
 }
 
 StageControl::~StageControl() { acsc_CloseComm(handle); }

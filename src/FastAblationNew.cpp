@@ -6,23 +6,85 @@
 #include "StageControl.h"
 #include "LaserControl.h"
 #include "GalvoControl.h"
+#include "../MetalMesh.h"
 #include <wchar.h>
+#include <string>
 #define MAX_VELOCITY 150
 
 using namespace std;
-void mainloop();
-bool isAnyKeyPressed();
 
+void keyboard();
+bool isAnyKeyPressed();
+void test();
+
+LaserControl laser = LaserControl();
+GalvoControl galvo = GalvoControl();
+StageControl stage = StageControl();
+
+
+enum string_code {
+	HELP,
+	QUIT,
+	EXPERIMENT,
+	KEYBOARD,
+	INVALID,
+	TEST
+};
+
+string_code hash_string(string const& inString) {
+	if (inString == "h") return HELP;
+	if (inString == "q") return QUIT;
+	if (inString == "e") return EXPERIMENT;
+	if (inString == "k") return KEYBOARD;
+	if (inString == "t") return TEST;
+	return INVALID;
+}
 
 int main() {
-	mainloop();
+	galvo.openShutter();
+	laser.setVoltage(0.7);
+	laser.openGate();
+	while (true) {
+		cout << "Command (h for help): ";
+		string command = "";
+		cin >> command;
+		switch (hash_string(command)) {
+		case HELP:
+			cout << "h: Help" << endl;
+			cout << "q: Quit" << endl;
+			cout << "e: Experiment (run an experiment)" << endl;
+			cout << "k: Keyboard (run keyboard control)" << endl;
+			break;
+
+		case QUIT:
+			return 0;
+
+		case EXPERIMENT:
+			cout << "not yet implemented" << endl;
+			break;
+
+		case KEYBOARD:
+			cout << "You can now use keyboard for control, press C to exit" << endl;
+			keyboard();
+			break;
+
+		case TEST:
+			cout << "running test code" << endl;
+			test();
+			break;
+
+		default:
+			cout << "Invalid command" << endl;
+			break;
+		}
+	}
+	keyboard();
 	return 0;
 }
 
-void mainloop() {
+void keyboard() {
 	bool running = true;
 	double velocity = 30;
-	StageControl stage = StageControl();
 	bool key_pressed = false;
 
 	while (running) {
@@ -74,4 +136,16 @@ bool isAnyKeyPressed() {
 		}
 	}
 	return false; // No keys are pressed
+}
+
+void test() {
+	MetalMesh mesh = MetalMesh(stage, galvo, laser);
+	laser.setVoltage(1.05);
+	mesh.setParameter("voltage", 1.05);
+	double kerf = 10;
+	cin >> kerf;
+	mesh.setParameter("kerf", kerf);
+	mesh.setParameter("square_length", 100);
+	mesh.setParameter("square_width", 100);
+	mesh.drawSquare(0, 0);
 }
