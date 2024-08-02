@@ -21,6 +21,9 @@ void StageControl::moveAbsolute(double x, double y, double z, int flags) {
     std::cout << "Failed to move stage to absolute position" << std::endl;
     std::cout << acsc_GetLastError();
   }
+  acsc_WaitMotionEnd(handle, 0, 10000);
+  acsc_WaitMotionEnd(handle, 1, 10000);
+  acsc_WaitMotionEnd(handle, 2, 10000);
 }
 
 double *StageControl::getStagePosition() {

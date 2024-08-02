@@ -47,8 +47,8 @@ string_code hash_string(string const& inString) {
 
 int main() {
 	galvo.openShutter();
-	laser.setVoltage(0.7);
-	laser.openGate();
+	laser.setVoltage(0.0);
+	laser.closeGate();
 	while (true) {
 		cout << "Command (h for help): ";
 		string command = "";
@@ -94,10 +94,34 @@ int main() {
 			break;
 
 		case CONFOCAL:
-			cout << "Getting confocal measurement" << endl;
-			double z;
-			z = confocal.getDepth();
-			cout << "Depth: " << z << endl;
+			cout << " Enter a confocal command: " << endl;
+			cout << "f : Set focus depth" << endl;
+			cout << "m : Move effector" << endl;
+			cout << "r : Move to focus" << endl;
+			cout << "b: Back" << endl;
+			cout << ">>";
+			char confocal_command;
+			cin >> confocal_command;
+			if (confocal_command == 'f') {
+				confocal.moveEffector("c2l");
+				confocal.setFocusDepth();
+				confocal.moveEffector("l2c");
+			}
+			else if (confocal_command == 'm') {
+				cout << "Enter direction (c2l or l2c): ";
+				string direction;
+				cin >> direction;
+				confocal.moveEffector(direction);
+			}
+			else if (confocal_command == 'r') {
+				confocal.moveToFocusLS();
+			}
+			else if (confocal_command == 'b') {
+				break;
+			}
+			else {
+				cout << "Invalid command" << endl;
+			}
 			break;
 
 		default:
@@ -111,6 +135,7 @@ int main() {
 
 
 void test() {
+	/*
 	MetalMesh mesh = MetalMesh(stage, galvo, laser);
 	laser.closeGate();
 	laser.setVoltage(1.05);
@@ -123,5 +148,5 @@ void test() {
 	mesh.setParameter("num_units", 8);
 	mesh.setParameter("crosses", 1);
 	mesh.raster(300);
-	galvo.home();
+	galvo.home();*/
 }
