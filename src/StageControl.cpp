@@ -14,16 +14,19 @@ StageControl::StageControl() {
   }
 }
 
-void StageControl::moveAbsolute(double x, double y, double z, int flags) {
+void StageControl::moveAbsolute(double x, double y, double z, int flags, bool async_mode) {
+  auto wait = async_mode ? ACSC_IGNORE : ACSC_SYNCHRONOUS;
   int axes[] = {ACSC_AXIS_0, ACSC_AXIS_1, ACSC_AXIS_2, -1};
   double positions[] = {x, y, z};
-  if (!acsc_ToPointM(handle, 0, axes, positions, ACSC_SYNCHRONOUS)) {
+  if (!acsc_ToPointM(handle, 0, axes, positions, wait)) {
     std::cout << "Failed to move stage to absolute position" << std::endl;
     std::cout << acsc_GetLastError();
   }
-  acsc_WaitMotionEnd(handle, 0, 10000);
-  acsc_WaitMotionEnd(handle, 1, 10000);
-  acsc_WaitMotionEnd(handle, 2, 10000);
+  if (!async_mode) {
+      acsc_WaitMotionEnd(handle, 0, 10000);
+      acsc_WaitMotionEnd(handle, 1, 10000);
+      acsc_WaitMotionEnd(handle, 2, 10000);
+  }
 }
 
 double *StageControl::getStagePosition() {
@@ -43,12 +46,12 @@ double *StageControl::getStagePosition() {
   return positions;
 }
 
-void StageControl::moveRelative(double x, double y, double z) {
+void StageControl::moveRelative(double x, double y, double z, bool async_mode) {
   double* pos = this->getStagePosition();
   x += pos[0];
   y += pos[1];
   z += pos[2];
-  StageControl::moveAbsolute(x, y, z);
+  StageControl::moveAbsolute(x, y, z, 0, async_mode);
 }
 
 void StageControl::reconnect() {
@@ -80,6 +83,16 @@ double StageControl::getVelocity() {
     double velocity;
     acsc_GetVelocity(handle, 0, &velocity, ACSC_SYNCHRONOUS);
     return velocity;
+}
+
+bool StageControl::isMoving() {
+    int state_x, state_y, state_z;
+    acsc_GetMotorState(handle, 0, &state_x, ACSC_SYNCHRONOUS);
+    acsc_GetMotorState(handle, 1, &state_y, ACSC_SYNCHRONOUS);
+    acsc_GetMotorState(handle, 2, &state_z, ACSC_SYNCHRONOUS);
+
+    return state_x == ACSC_MST_MOVE || state_y == ACSC_MST_MOVE || state_z == ACSC_MST_MOVE;
+
 }
 
 StageControl::~StageControl() { acsc_CloseComm(handle); }
