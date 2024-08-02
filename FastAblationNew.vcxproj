@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MetalMesh.cpp" />
+    <ClCompile Include="src\ConfocalControl.cpp" />
+    <ClCompile Include="src\ConfocalWrapper.cpp" />
     <ClCompile Include="src\DAQControl.cpp" />
     <ClCompile Include="src\FastAblationNew.cpp" />
     <ClCompile Include="src\GalvoControl.cpp" />
@@ -34,6 +36,8 @@
     <ClInclude Include="include\CHRocodileLibPluginDef.h" />
     <ClInclude Include="include\CHRocodileLibSpecialFunc.h" />
     <ClInclude Include="MetalMesh.h" />
+    <ClInclude Include="src\ConfocalControl.h" />
+    <ClInclude Include="src\ConfocalWrapper.h" />
     <ClInclude Include="src\DAQControl.h" />
     <ClInclude Include="src\GalvoControl.h" />
     <ClInclude Include="src\LaserControl.h" />
@@ -44,12 +48,10 @@
     <Library Include="lib\ACSCL_x86.LIB" />
     <Library Include="lib\cbw32.lib" />
     <Library Include="lib\cbw64.lib" />
-    <Library Include="lib\Win32\CHRocodile.lib" />
-    <Library Include="lib\x64\CHRocodile.lib" />
+    <Library Include="lib\CHRocodile.lib" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib\Win32\CHRocodile.dll" />
-    <None Include="lib\x64\CHRocodile.dll" />
+    <None Include="lib\CHRocodile.dll" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -142,6 +144,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "lib/CHRocodile.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

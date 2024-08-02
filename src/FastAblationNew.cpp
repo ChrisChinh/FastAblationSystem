@@ -10,6 +10,8 @@
 #include <wchar.h>
 #include <string>
 #include "KeyboardControl.h"
+#include "ConfocalWrapper.h"
+
 
 using namespace std;
 
@@ -18,6 +20,7 @@ void test();
 LaserControl laser = LaserControl();
 GalvoControl galvo = GalvoControl();
 StageControl stage = StageControl();
+ConfocalWrapper confocal = ConfocalWrapper(stage);
 
 
 enum string_code {
@@ -27,7 +30,8 @@ enum string_code {
 	KEYBOARD,
 	INVALID,
 	TEST,
-	LASER
+	LASER,
+	CONFOCAL
 };
 
 string_code hash_string(string const& inString) {
@@ -37,6 +41,7 @@ string_code hash_string(string const& inString) {
 	if (inString == "k") return KEYBOARD;
 	if (inString == "t") return TEST;
 	if (inString == "l") return LASER;
+	if (inString == "c") return CONFOCAL;
 	return INVALID;
 }
 
@@ -86,6 +91,13 @@ int main() {
 			if (state == 0) laser.closeGate();
 			else if (state == 1) laser.openGate();
 			else cout << "Invalid state" << endl;
+			break;
+
+		case CONFOCAL:
+			cout << "Getting confocal measurement" << endl;
+			double z;
+			z = confocal.getDepth();
+			cout << "Depth: " << z << endl;
 			break;
 
 		default:

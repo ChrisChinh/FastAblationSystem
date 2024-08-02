@@ -14,6 +14,7 @@ public:
 	void jogMotion(int axis, double velocity);
 	void stopJogMotion(int axis);
 	void setVelocity(double velocity);
+	double getVelocity();
 
 private:
 	HANDLE handle;

@@ -73,4 +73,10 @@ void StageControl::setVelocity(double velocity) {
     acsc_SetVelocity(handle, 2, velocity / 8.0, ACSC_SYNCHRONOUS);
 }
 
+double StageControl::getVelocity() {
+    double velocity;
+    acsc_GetVelocity(handle, 0, &velocity, ACSC_SYNCHRONOUS);
+    return velocity;
+}
+
 StageControl::~StageControl() { acsc_CloseComm(handle); }

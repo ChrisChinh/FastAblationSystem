@@ -33,6 +33,12 @@
     <ClCompile Include="MetalMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ConfocalControl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConfocalWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\DAQControl.h">
@@ -68,6 +74,12 @@
     <ClInclude Include="src\GalvoControl.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ConfocalControl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ConfocalWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\ACSCL_x64.LIB">
@@ -82,18 +94,12 @@
     <Library Include="lib\cbw64.lib">
       <Filter>Resource Files</Filter>
     </Library>
-    <Library Include="lib\x64\CHRocodile.lib">
-      <Filter>Resource Files</Filter>
-    </Library>
-    <Library Include="lib\Win32\CHRocodile.lib">
+    <Library Include="lib\CHRocodile.lib">
       <Filter>Resource Files</Filter>
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <None Include="lib\x64\CHRocodile.dll">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lib\Win32\CHRocodile.dll">
+    <None Include="lib\CHRocodile.dll">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
