@@ -15,7 +15,7 @@ int MetalMesh::run() {
 	double* origin = stage.getStagePosition();
 
 	double FOV_length = parameters["period}"] * parameters["num_units"];
-	int rows = parameters["aperture"] / FOV_length;
+	int rows = parameters["aperture"] / (FOV_length / 1000.0);
 	int cols = rows; // For now, everything is square
 
 	cout << "Metal mesh ablation started" << endl;
@@ -51,7 +51,6 @@ void MetalMesh::raster(double FOV_length) {
 	* Raster the current field, using the galvo to scan the laser across the field
 	* and draw a pattern of either crosses or squares according to the parameters set
 	* */
-	FOV_length *= 1000; // Convert to microns
 	double square_length = parameters["square_length"] - parameters["kerf"];
 	double square_width = parameters["square_width"] - parameters["kerf"];
 	laser.closeGate();
@@ -59,6 +58,7 @@ void MetalMesh::raster(double FOV_length) {
 	// Go to each spot where a square should be drawn
 	for (double v = (-FOV_length / 2); v < (FOV_length / 2); v += (FOV_length / parameters["num_units"])) {
 		for (double h = (-FOV_length / 2); h < (FOV_length / 2); h += (FOV_length / parameters["num_units"])) {
+			cout << "Drawing square at " << h << ", " << v << endl;
 			galvo.setMicron(h, v);
 			if (parameters["crosses"] == 1)
 				drawCross(h, v);
@@ -82,6 +82,7 @@ void MetalMesh::drawSquare(double h_init, double v_init, double width, double he
 }
 
 void MetalMesh::drawCross(double h, double v) {
+	cout << "Drawing cross" << endl;
 	double length = parameters["square_length"] - parameters["kerf"];
 	double width = parameters["square_width"] - parameters["kerf"];
 

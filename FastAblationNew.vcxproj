@@ -29,6 +29,10 @@
   <ItemGroup>
     <ClInclude Include="include\ACSC.h" />
     <ClInclude Include="include\cbw.h" />
+    <ClInclude Include="include\CHRocodileLib.h" />
+    <ClInclude Include="include\CHRocodileLibErrorDef.h" />
+    <ClInclude Include="include\CHRocodileLibPluginDef.h" />
+    <ClInclude Include="include\CHRocodileLibSpecialFunc.h" />
     <ClInclude Include="MetalMesh.h" />
     <ClInclude Include="src\DAQControl.h" />
     <ClInclude Include="src\GalvoControl.h" />
@@ -40,6 +44,12 @@
     <Library Include="lib\ACSCL_x86.LIB" />
     <Library Include="lib\cbw32.lib" />
     <Library Include="lib\cbw64.lib" />
+    <Library Include="lib\Win32\CHRocodile.lib" />
+    <Library Include="lib\x64\CHRocodile.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\Win32\CHRocodile.dll" />
+    <None Include="lib\x64\CHRocodile.dll" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

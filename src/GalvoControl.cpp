@@ -26,5 +26,11 @@ void GalvoControl::setMicron(double h, double v) {
 }
 
 void GalvoControl::setAngle(int channel, double value) {
-	galvo.setAnalogOut(channel, value * ANGLE_TO_VOLTAGE);
+	this->setVoltage(channel, value * ANGLE_TO_VOLTAGE);
+}
+
+void GalvoControl::setVoltage(int channel, double v) {
+	if (v > 5) v = 5;
+	else if (v < -5) v = -5;
+	galvo.setAnalogOut(channel, v);
 }
