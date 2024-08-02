@@ -61,6 +61,7 @@ int main() {
 			cout << "k: Keyboard (run keyboard control)" << endl;
 			cout << "t: Test (run test code)" << endl;
 			cout << "l: Laser (set laser voltage)" << endl;
+			cout << "p: Laser prep" << endl;
 			break;
 
 		case QUIT:

@@ -44,7 +44,6 @@ void ConfocalWrapper::moveEffector(string direction) {
 		stage.moveRelative(confocalOffsets[0], confocalOffsets[1], confocalOffsets[2]);
 	}
 	else if (direction == "l2c") {
-		cout << "Moving " << -confocalOffsets[0] << ", " << -confocalOffsets[1] << ", " << -confocalOffsets[2] << endl;
 		stage.moveRelative(-confocalOffsets[0], -confocalOffsets[1], -confocalOffsets[2]);
 	}
 	else {
@@ -83,14 +82,13 @@ void ConfocalWrapper::getConfocalOffsets() {
 	confocalOffsets[0] = stod(x);
 	confocalOffsets[1] = stod(y);
 	confocalOffsets[2] = stod(z);
-
-	cout << "Offsets: " << confocalOffsets[0] << ", " << confocalOffsets[1] << ", " << confocalOffsets[2] << endl;
 }
 
 void ConfocalWrapper::moveToFocusLS() {
 	this->moveEffector("c2l");
 	double depth = confocal.getDepth();
 	double delta = focus_depth - depth;
+	cout << "Diff: " << delta / 1000.0 << endl;
 	stage.moveRelative(0, 0, delta / 1000);
 	this->moveEffector("l2c");
 }
