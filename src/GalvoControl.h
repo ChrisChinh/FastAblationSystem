@@ -12,5 +12,6 @@ class GalvoControl
 
 	private:
 	DAQControl galvo = DAQControl("2070C2A", 0);
+	void setVoltage(int channel, double v);
 };
 
