@@ -13,8 +13,10 @@ MetalMesh::MetalMesh(StageControl& s, GalvoControl& g, LaserControl& l, Confocal
 int MetalMesh::run() {
 	laser.setVoltage(parameters["voltage"]);
 	double* origin = stage.getStagePosition();
+	double prev_v = stage.getVelocity();
+	stage.setVelocity(200.0);
 
-	double FOV_length = parameters["period}"] * parameters["num_units"]; // in microns
+	double FOV_length = parameters["period"] * parameters["num_units"]; // in microns
 	int rows = parameters["aperture"] / (FOV_length / 1000.0);
 	int cols = rows; // For now, everything is square
 
@@ -31,8 +33,8 @@ int MetalMesh::run() {
 
 	for (int x = 0; x < cols; x++) {
 		for (int y = 0; y < rows; y++) {
-			float x_pos = origin[0] - (x * FOV_length);
-			float y_pos = origin[1] - (y * FOV_length);
+			double x_pos = origin[0] + (x * (FOV_length / 1000.0));
+			double y_pos = origin[1] + (y * (FOV_length / 1000.0));
 
 			// Check if in the bounds of the circle
 			if (parameters["circle_aperture"] == 1) {
@@ -47,10 +49,17 @@ int MetalMesh::run() {
 			confocal.findFocus();
 			stage.moveAbsolute(x_pos, y_pos, origin[2]);
 			cout << "FOV: " << x << ", " << y << endl;
+			cout << "  Position: " << x_pos << ", " << y_pos << endl;
+			cout << "  FOV_length: " << FOV_length << endl;
 			this->raster(FOV_length);
 		}
 
 	}
+
+	auto end = chrono::high_resolution_clock::now();
+	chrono::duration<double> elapsed = end - start;
+	cout << "Metal mesh ablation finished in " << elapsed.count() << " seconds" << endl;
+	stage.setVelocity(prev_v);
 	return 1;
 }
 
@@ -64,14 +73,17 @@ void MetalMesh::raster(double FOV_length) {
 	laser.closeGate();
 
 	// Go to each spot where a square should be drawn
-	for (double v = (-FOV_length / 2); v < (FOV_length / 2); v += (FOV_length / parameters["num_units"])) {
-		for (double h = (-FOV_length / 2); h < (FOV_length / 2); h += (FOV_length / parameters["num_units"])) {
+	for (double v = (-FOV_length / 2); v < (FOV_length / 2) - parameters["period"]; v += (FOV_length / parameters["num_units"])) {
+		int i = 0;
+		for (double h = (-FOV_length / 2); h < (FOV_length / 2) - parameters["period"]; h += (FOV_length / parameters["num_units"])) {
+			i++;
 			cout << "Drawing square at " << h << ", " << v << endl;
 			galvo.setMicron(h, v);
 			if (parameters["crosses"] == 1)
 				drawCross(h, v);
 			else drawSquare(h, v);
 		}
+		cout << " A total of " << i << " squares drawn" << endl;
 	}
 
 }
@@ -80,10 +92,14 @@ void MetalMesh::drawSquare(double h_init, double v_init, double width, double he
 	double square_length = (height == 0) ? parameters["square_length"] - parameters["kerf"] : height;
 	double square_width = (width == 0) ? parameters["square_width"] - parameters["kerf"] : width;
 
-	laser.openGate();
+	bool first = true;
 	for (double v = (-square_length / 2) + v_init; v < (square_length / 2) + v_init; v += parameters["kerf"]) {
 		for (double h = (-square_width / 2) + h_init; h < (square_width / 2) + h_init; h += parameters["kerf"]) {
 			galvo.setMicron(h, v);
+			if (first) {
+				laser.openGate();
+				first = false;
+			}
 		}
 	}
 	laser.closeGate();

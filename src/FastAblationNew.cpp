@@ -17,11 +17,14 @@ using namespace std;
 
 void test();
 
+// Controllers
 LaserControl laser = LaserControl();
 GalvoControl galvo = GalvoControl();
 StageControl stage = StageControl();
 ConfocalWrapper confocal = ConfocalWrapper(stage);
-MetalMesh mesh = MetalMesh(stage, galvo, laser);
+
+// Experiments
+MetalMesh mesh = MetalMesh(stage, galvo, laser, confocal);
 
 
 
@@ -33,7 +36,8 @@ enum string_code {
 	INVALID,
 	TEST,
 	LASER,
-	CONFOCAL
+	CONFOCAL,
+	LASER_PREP
 };
 
 string_code hash_string(string const& inString) {
@@ -44,6 +48,7 @@ string_code hash_string(string const& inString) {
 	if (inString == "t") return TEST;
 	if (inString == "l") return LASER;
 	if (inString == "c") return CONFOCAL;
+	if (inString == "lp") return LASER_PREP;
 	return INVALID;
 }
 
@@ -63,7 +68,7 @@ int main() {
 			cout << "k: Keyboard (run keyboard control)" << endl;
 			cout << "t: Test (run test code)" << endl;
 			cout << "l: Laser (set laser voltage)" << endl;
-			cout << "p: Laser prep" << endl;
+			cout << "lp: Laser prep" << endl;
 			break;
 
 		case QUIT:
@@ -73,11 +78,13 @@ int main() {
 			cout << "Enter which experiment to run: " << endl;
 			cout << "1: Metal mesh" << endl;
 			cout << "b: Back" << endl;
+			cout << ">> ";
 			char exp;
 			cin >> exp;
 			switch (exp) {
 			case '1':
-				laser.setVoltage(1.05);
+				laser.setVoltage(0.6);
+				laser.openGate();
 				mesh.setParameter("voltage", 1.05);
 				cout << "enter the kerf: ";
 				double kerf;
@@ -88,7 +95,13 @@ int main() {
 				mesh.setParameter("num_units", 6);
 				mesh.setParameter("crosses", 1);
 				mesh.setParameter("period", 56.199);
-				mesh.raster(337.19);
+				mesh.setParameter("aperture", 1);
+				mesh.setParameter("circle_aperture", 0);
+				mesh.setParameter("use_confocal", 0);
+				mesh.run();
+				galvo.home();
+				laser.setVoltage(0.6);
+				laser.openGate();
 				break;
 			case 'b':
 				break;
@@ -98,6 +111,12 @@ int main() {
 		case KEYBOARD:
 			cout << "You can now use keyboard for control, press C to exit" << endl;
 			keyboard(galvo, stage);
+			break;
+
+		case LASER_PREP:
+			laser.setVoltage(0.6);
+			laser.openGate();
+			galvo.openShutter();
 			break;
 
 		case TEST:
@@ -124,7 +143,7 @@ int main() {
 			cout << "m : Move effector" << endl;
 			cout << "r : Move to focus" << endl;
 			cout << "b: Back" << endl;
-			cout << ">>";
+			cout << ">> ";
 			char confocal_command;
 			cin >> confocal_command;
 			if (confocal_command == 'f') {
@@ -139,7 +158,8 @@ int main() {
 				confocal.moveEffector(direction);
 			}
 			else if (confocal_command == 'r') {
-				confocal.moveToFocusLS();
+				confocal.setState(ConfocalWrapper::LIVE_SCAN);
+				confocal.findFocus();
 			}
 			else if (confocal_command == 'b') {
 				break;

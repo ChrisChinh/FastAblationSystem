@@ -1,5 +1,5 @@
 #include "GalvoControl.h"
-#define MICRON_TO_ANGLE_X 0.02852
+#define MICRON_TO_ANGLE_X 0.02695
 #define MICRON_TO_ANGLE_Y 0.02774
 #define ANGLE_TO_VOLTAGE 0.222
 GalvoControl::GalvoControl() {
