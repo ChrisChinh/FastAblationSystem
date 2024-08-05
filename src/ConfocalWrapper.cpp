@@ -159,3 +159,21 @@ void ConfocalWrapper::moveToFocusPS() {
 	double newZ = this->getDepthAtPoint(pos[0], pos[1]);
 	stage.moveAbsolute(pos[0], pos[1], newZ);
 }
+
+void ConfocalWrapper::findFocus() {
+	switch (confocal_state) {
+	case NO_CONFOCAL:
+		return;
+		break;
+	case PRE_SCAN:
+		this->moveToFocusPS();
+		break;
+	case LIVE_SCAN:
+		this->moveToFocusLS();
+		break;
+	}
+}
+
+void ConfocalWrapper::setState(confocal_code state) {
+	confocal_state = state;
+}

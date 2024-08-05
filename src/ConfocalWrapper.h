@@ -8,6 +8,19 @@ using namespace std;
 
 class ConfocalWrapper
 {
+public:
+	ConfocalWrapper(StageControl& stage);
+	void setFocusDepth();
+	void moveEffector(string direction);
+	double getDepth();
+	void scanArea(double extent_x, double extent_y);
+	void findFocus();
+	enum confocal_code {
+		NO_CONFOCAL,
+		PRE_SCAN,
+		LIVE_SCAN
+	};
+	void setState(confocal_code state);
 private:
 	ConfocalControl confocal = ConfocalControl();
 	StageControl& stage;
@@ -17,13 +30,10 @@ private:
 	void getConfocalOffsets();
 	void moveToFocus();
 	double getDepthAtPoint(double x, double y);
-public:
-	ConfocalWrapper(StageControl& stage);
-	void setFocusDepth();
-	void moveEffector(string direction);
-	void moveToFocusLS();
-	double getDepth();
-	void scanArea(double extent_x, double extent_y);
+	confocal_code confocal_state = NO_CONFOCAL;
 	void moveToFocusPS();
+	void moveToFocusLS();
+
+
 };
 

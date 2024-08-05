@@ -6,7 +6,7 @@
 using namespace std;
 
 
-MetalMesh::MetalMesh(StageControl& s, GalvoControl& g, LaserControl& l) : stage(s), galvo(g), laser(l)
+MetalMesh::MetalMesh(StageControl& s, GalvoControl& g, LaserControl& l, ConfocalWrapper& c) : stage(s), galvo(g), laser(l), confocal(c)
 {
 }
 
@@ -14,9 +14,16 @@ int MetalMesh::run() {
 	laser.setVoltage(parameters["voltage"]);
 	double* origin = stage.getStagePosition();
 
-	double FOV_length = parameters["period}"] * parameters["num_units"];
+	double FOV_length = parameters["period}"] * parameters["num_units"]; // in microns
 	int rows = parameters["aperture"] / (FOV_length / 1000.0);
 	int cols = rows; // For now, everything is square
+
+	// Decide on confocal usage
+	if (parameters["use_confocal"] == 1) {
+		if (parameters["pre_scan"] == 1) confocal.setState(ConfocalWrapper::PRE_SCAN);
+		else confocal.setState(ConfocalWrapper::LIVE_SCAN);
+	}
+	else confocal.setState(ConfocalWrapper::NO_CONFOCAL);
 
 	cout << "Metal mesh ablation started" << endl;
 	int total_fields = rows * cols;
@@ -37,6 +44,7 @@ int MetalMesh::run() {
 				}
 			}
 
+			confocal.findFocus();
 			stage.moveAbsolute(x_pos, y_pos, origin[2]);
 			cout << "FOV: " << x << ", " << y << endl;
 			this->raster(FOV_length);

@@ -21,6 +21,8 @@ LaserControl laser = LaserControl();
 GalvoControl galvo = GalvoControl();
 StageControl stage = StageControl();
 ConfocalWrapper confocal = ConfocalWrapper(stage);
+MetalMesh mesh = MetalMesh(stage, galvo, laser);
+
 
 
 enum string_code {
@@ -68,7 +70,29 @@ int main() {
 			return 0;
 
 		case EXPERIMENT:
-			cout << "not yet implemented" << endl;
+			cout << "Enter which experiment to run: " << endl;
+			cout << "1: Metal mesh" << endl;
+			cout << "b: Back" << endl;
+			char exp;
+			cin >> exp;
+			switch (exp) {
+			case '1':
+				laser.setVoltage(1.05);
+				mesh.setParameter("voltage", 1.05);
+				cout << "enter the kerf: ";
+				double kerf;
+				cin >> kerf;
+				mesh.setParameter("kerf", kerf);
+				mesh.setParameter("square_length", 37.77);
+				mesh.setParameter("square_width", 10.56);
+				mesh.setParameter("num_units", 6);
+				mesh.setParameter("crosses", 1);
+				mesh.setParameter("period", 56.199);
+				mesh.raster(337.19);
+				break;
+			case 'b':
+				break;
+			}
 			break;
 
 		case KEYBOARD:
@@ -129,6 +153,7 @@ int main() {
 			cout << "Invalid command" << endl;
 			break;
 		}
+
 	}
 	return 0;
 }
