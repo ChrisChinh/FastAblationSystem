@@ -4,9 +4,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "../include/cbw.h"
 #include "../include/uldaq.h"
-#include "../include/utility.h"
 
 class DAQControl
 {
@@ -18,7 +16,7 @@ private:
     int range;
 
     // Name of the board.
-    char boardName[BOARDNAMELEN];
+    char boardName[8];
 
     // DAQ Devuce Descriptor.
     DaqDeviceDescriptor device;

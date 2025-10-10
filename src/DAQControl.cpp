@@ -3,7 +3,7 @@
 #define CHECK_ERROR(CODE) if((CODE)!=NOERRORS)throw CODE
 
 DAQControl::DAQControl(std::string unique_id, uint8_t board_num) {
-    /* Variable Initialization */
+    /* Variable Initialization *//*
     boardNum = board_num;
     int ULStat = NOERRORS;
     range = BIP10VOLTS;
@@ -55,26 +55,28 @@ DAQControl::DAQControl(std::string unique_id, uint8_t board_num) {
 	catch (const char * s) {
 		std::cout << s << std::endl;
 		cbReleaseDaqDevice(boardNum);
-	}
+	}*/
 }
 
 DAQControl::~DAQControl() {
-    cbReleaseDaqDevice(boardNum);
+    //cbReleaseDaqDevice(boardNum);
 }
 
 int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 	if (voltage > 10.0) voltage = 10.0;
 	else if (voltage < -10.0) voltage = -10.0;
-	USHORT dataValue;
-	cbFromEngUnits(boardNum, range, voltage, &dataValue);
-    return cbAOut(boardNum, channel, range, dataValue);
+	//USHORT dataValue;
+	//cbFromEngUnits(boardNum, range, voltage, &dataValue);
+    //return cbAOut(boardNum, channel, range, dataValue);
+	return 0;
 }
 
 int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
-	return cbDBitOut(boardNum, portType, port_num, value);
+	//return cbDBitOut(boardNum, portType, port_num, value);
+	return 0;
 }
 
 int analogScanOut(uint8_t low_chan, uint8_t high_chan, float *voltages, uint32_t num_points, uint32_t rate) {
-
+	return 0;
 }
 
