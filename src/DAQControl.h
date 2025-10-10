@@ -5,6 +5,8 @@
 #include <stdint.h>
 
 #include "../include/cbw.h"
+#include "../include/uldaq.h"
+#include "../include/utility.h"
 
 class DAQControl
 {
@@ -32,6 +34,9 @@ public:
 
     // Set Digital Output Status (High / Low).
     int setDigitalOut(uint8_t port_num, bool value);
+
+    // Scan an Analog output
+    int analogScanOut(uint8_t low_chan, uint8_t high_chan, float *voltages, uint32_t rate = 5000);
 };
 
 #endif

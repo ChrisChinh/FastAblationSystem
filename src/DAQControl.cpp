@@ -73,3 +73,8 @@ int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
 	return cbDBitOut(boardNum, portType, port_num, value);
 }
+
+int analogScanOut(uint8_t low_chan, uint8_t high_chan, float *voltages, uint32_t num_points, uint32_t rate) {
+
+}
+
