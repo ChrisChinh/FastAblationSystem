@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../include/uldaq.h"
+#include <string.h>
 #include <vector>
 
 using namespace std;

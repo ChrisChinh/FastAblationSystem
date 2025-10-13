@@ -4,13 +4,14 @@
 #include <iostream>
 #include "GalvoControl.h"
 #include <stdint.h>
+#include <cmath>
 
 using namespace std;
 
 void test();
 
 // Controllers
-DAQControl daq = DAQControl("");
+//DAQControl daq = DAQControl("");
 
 // Experiments
 
@@ -249,5 +250,10 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount, Range range,
 }
 
 int main() {
+	DAQControl daq = DAQControl("Dev1");
+	double buffer[1000];
+	CreateOutputData(500, 2, BIP10VOLTS, buffer);
+	vector<double> data(buffer, buffer+1000);
+	daq.analogScanOut(0, 1, data);
 	return 0;
 }

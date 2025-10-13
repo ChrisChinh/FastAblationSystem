@@ -12,7 +12,7 @@ class LaserControl
 
 	private:
 	double voltage;
-	DAQControl laser = DAQControl("20BF9C2", 1);
+	DAQControl laser = DAQControl("20BF9C2");
 	bool gateOpen = true;
 
 
