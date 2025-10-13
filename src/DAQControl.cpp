@@ -1,74 +1,53 @@
 #include "DAQControl.h"
-#include <stdint.h>
-#define CHECK_ERROR(CODE) if((CODE)!=NOERRORS)throw CODE
+#define CHECK_ERROR(CODE) if((CODE)!=ERR_NO_ERROR)throw CODE
 
-DAQControl::DAQControl(std::string unique_id, uint8_t board_num) {
-    /* Variable Initialization *//*
-    boardNum = board_num;
-    int ULStat = NOERRORS;
-    range = BIP10VOLTS;
-	portType = AUXPORT;
-	DaqDeviceDescriptor devices[100];
-	
-	try {
-		int number_of_devices = 100;	// Maximum number of devices.
-		// Find all DAQ devices.
-		ULStat = cbGetDaqDeviceInventory(DaqDeviceInterface::ANY_IFC, devices, &number_of_devices);
-        CHECK_ERROR(ULStat);
 
-		if (number_of_devices == 0) {
-			throw "Error: No DAQ Devices found.";
-		}
-		std::cout << "Number of Devices: " << number_of_devices << std::endl;
+#define MAX_DEVICES 100
+#define DEFAULT_RANGE BIP10VOLTS
 
-		// Search for the DAQ with given unique id.
-		for (int i = 0; i < number_of_devices; i++) {
-			DaqDeviceDescriptor dev = devices[i];
-			std::cout << "   " << dev.ProductName <<  " (" << dev.UniqueID << ") - Device ID = " << dev.ProductID;
-			if (!strcmp(dev.UniqueID, unique_id.c_str())) {
-				std::cout << "<-- This one" << std::endl;
-				device = dev;
-			}
-			else std::cout << std::endl;
-		}
+DAQControl::DAQControl(std::string unique_id) {
+    int descriptorIndex = 0;
+	DaqDeviceDescriptor devices[MAX_DEVICES];
+	DaqDeviceInterface interfaceType = ANY_IFC;
+	DaqDeviceHandle handle = 0;
+	unsigned int numDevs = MAX_DEVICES;
+	Range range = DEFAULT_RANGE;
 
-		// Create DAQ Device with given board number.
-		ULStat = cbCreateDaqDevice(boardNum, device);
-        CHECK_ERROR(ULStat);
 
-		// Get name of the board.
-		ULStat = cbGetBoardName(boardNum, boardName);
-		CHECK_ERROR(ULStat);
-            
-		printf("Board Name: %s\n\r", boardName);
-
-		// Set Digital port direction.
-		ULStat = cbDConfigPort(boardNum, 1, DIGITALOUT);
-		CHECK_ERROR(ULStat);
+	CHECK_ERROR(ulGetDaqDeviceInventory(interfaceType, devices, &numDevs));
+	if (numDevs == 0) {
+		throw "Error: No DAQ Devices found.";
 	}
-	catch (const int stat) {
-		char *msg = NULL;
-		cbGetErrMsg(stat, msg);
-		std::cout << msg << std::endl;
-		cbReleaseDaqDevice(boardNum);
+
+	for (unsigned int i = 0; i < numDevs; i++) {
+		DaqDeviceDescriptor dev = devices[i];
+		std::cout << "   " << dev.productName << " (" << dev.uniqueId << ") - Device ID = " << dev.productId;
+		if (!strcmp(dev.uniqueId, unique_id.c_str())) {
+			std::cout << "<-- This one" << std::endl;
+			descriptorIndex = i;
+		}
+		else std::cout << std::endl;
 	}
-	catch (const char * s) {
-		std::cout << s << std::endl;
-		cbReleaseDaqDevice(boardNum);
-	}*/
+
+	handle = ulCreateDaqDevice(devices[descriptorIndex]);
+	if (handle == 0) {
+		throw "Error: Unable to create DAQ device.";
+	}
+
+	CHECK_ERROR(ulConnectDaqDevice(handle));
 }
 
 DAQControl::~DAQControl() {
-    //cbReleaseDaqDevice(boardNum);
+	ulDisconnectDaqDevice(handle);
+	ulReleaseDaqDevice(handle);
 }
 
 int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 	if (voltage > 10.0) voltage = 10.0;
 	else if (voltage < -10.0) voltage = -10.0;
-	//USHORT dataValue;
-	//cbFromEngUnits(boardNum, range, voltage, &dataValue);
-    //return cbAOut(boardNum, channel, range, dataValue);
-	return 0;
+	AOutFlag flags = AOUT_FF_DEFAULT;
+	int err = ulAOut(handle, channel, range, flags, voltage);
+	return err;
 }
 
 int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
@@ -76,7 +55,12 @@ int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
 	return 0;
 }
 
-int analogScanOut(uint8_t low_chan, uint8_t high_chan, float *voltages, uint32_t num_points, uint32_t rate) {
-	return 0;
+int DAQControl::analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, double rate) {
+	int num_chans = high_chan - low_chan + 1;
+	int samples_per_chan = voltages.size() / num_chans;
+	ScanOption scanOptions = ScanOption(SO_DEFAULTIO | SO_CONTINUOUS);
+	AOutScanFlag flags = AOUTSCAN_FF_DEFAULT;
+	int err = ulAOutScan(handle, low_chan, high_chan, range, samples_per_chan, &rate, scanOptions, flags, voltages.data());
+	return err;
 }
 

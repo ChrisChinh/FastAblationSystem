@@ -3,28 +3,29 @@
 
 #include <iostream>
 #include <stdint.h>
-
+#include <stdlib.h>
 #include "../include/uldaq.h"
+#include <vector>
+
+using namespace std;
+
 
 class DAQControl
 {
 private:
-    // Board number that we assigned to this board.
-    int boardNum;
-
     // Range of the analog voltage.
-    int range;
+    Range range;
 
     // Name of the board.
     char boardName[8];
 
-    // DAQ Devuce Descriptor.
-    DaqDeviceDescriptor device;
+    // DAQ Device Descriptor.
+	DaqDeviceHandle handle;
 
     int portType;
 
 public:
-    DAQControl(std::string unique_id, uint8_t board_num);
+    DAQControl(std::string unique_id);
     ~DAQControl();
 
     // Set Analog Output voltage.
@@ -34,7 +35,7 @@ public:
     int setDigitalOut(uint8_t port_num, bool value);
 
     // Scan an Analog output
-    int analogScanOut(uint8_t low_chan, uint8_t high_chan, float *voltages, uint32_t rate = 5000);
+    int analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, double rate = 5000);
 };
 
 #endif
