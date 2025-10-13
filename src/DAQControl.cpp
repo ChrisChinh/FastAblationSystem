@@ -9,14 +9,14 @@ DAQControl::DAQControl(std::string unique_id) {
     int descriptorIndex = 0;
 	DaqDeviceDescriptor devices[MAX_DEVICES];
 	DaqDeviceInterface interfaceType = ANY_IFC;
-	DaqDeviceHandle handle = 0;
+	handle = 0;
 	unsigned int numDevs = MAX_DEVICES;
 	Range range = DEFAULT_RANGE;
 
 
 	CHECK_ERROR(ulGetDaqDeviceInventory(interfaceType, devices, &numDevs));
 	if (numDevs == 0) {
-		throw "Error: No DAQ Devices found.";
+		throw std::runtime_error("Error: No DAQ Devices found.");
 	}
 
 	for (unsigned int i = 0; i < numDevs; i++) {
@@ -31,7 +31,7 @@ DAQControl::DAQControl(std::string unique_id) {
 
 	handle = ulCreateDaqDevice(devices[descriptorIndex]);
 	if (handle == 0) {
-		throw "Error: Unable to create DAQ device.";
+		throw std::runtime_error("Error: Unable to create DAQ device.");
 	}
 
 	CHECK_ERROR(ulConnectDaqDevice(handle));
