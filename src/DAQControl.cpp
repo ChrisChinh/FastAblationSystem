@@ -55,12 +55,22 @@ int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
 	return 0;
 }
 
-int DAQControl::analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, double rate) {
+int DAQControl::analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages,  bool blocking, double rate) {
 	int num_chans = high_chan - low_chan + 1;
 	int samples_per_chan = voltages.size() / num_chans;
 	ScanOption scanOptions = ScanOption(SO_DEFAULTIO | SO_CONTINUOUS);
 	AOutScanFlag flags = AOUTSCAN_FF_DEFAULT;
 	int err = ulAOutScan(handle, low_chan, high_chan, range, samples_per_chan, &rate, scanOptions, flags, voltages.data());
+	if (blocking) {
+		ScanStatus status;
+		TransferStatus tStatus;
+		err = ulAOutScanStatus(handle, &status, &tStatus);
+		while (status == SS_RUNNING && err == ERR_NO_ERROR) {
+			err = ulAOutScanStatus(handle, &status, &tStatus);
+			// Sleep for 100 ms
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+	}
 	return err;
 }
 

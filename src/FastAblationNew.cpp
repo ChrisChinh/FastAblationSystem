@@ -250,10 +250,10 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount, Range range,
 }
 
 int main() {
-	DAQControl daq = DAQControl("Dev1");
+	DAQControl daq = DAQControl("20BF9C2");
 	double buffer[1000];
 	CreateOutputData(500, 2, BIP10VOLTS, buffer);
 	vector<double> data(buffer, buffer+1000);
-	daq.analogScanOut(0, 1, data);
+	daq.analogScanOut(0, 1, data, true);
 	return 0;
 }

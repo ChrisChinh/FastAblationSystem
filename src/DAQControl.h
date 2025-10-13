@@ -7,6 +7,7 @@
 #include "../include/uldaq.h"
 #include <string.h>
 #include <vector>
+#include <thread>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ public:
     int setDigitalOut(uint8_t port_num, bool value);
 
     // Scan an Analog output
-    int analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, double rate = 5000);
+    int analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, bool blocking = true, double rate = 5000);
 };
 
 #endif
