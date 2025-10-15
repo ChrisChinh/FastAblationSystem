@@ -24,6 +24,7 @@ private:
     char boardName[8];
 
     // DAQ Device Descriptor.
+    uint8_t address;
 
     int portType;
 

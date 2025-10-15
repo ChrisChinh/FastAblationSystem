@@ -28,14 +28,8 @@ target_include_directories(${PROJECT_NAME}
         "${CMAKE_SOURCE_DIR}/src"
 )
 
-# Optionally link to libuldaq if found on the system
-find_library(ULDAQ_LIBRARY NAMES uldaq)
-if(ULDAQ_LIBRARY)
-    message(STATUS "Found libuldaq: ${ULDAQ_LIBRARY}")
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${ULDAQ_LIBRARY})
-else()
-    message(STATUS "libuldaq not found on system. Proceeding without it. If you need it, set ULDAQ_LIBRARY or install libuldaq.")
-endif()
+find_library(DAQHAT_LIB daqhats HINTS /usr/local/lib)
+target_link_libraries(FastAblationNew PRIVATE ${DAQHAT_LIB})
 
 # On Linux some DAQ backends may require pthread and dl; add them if present
 if(UNIX AND NOT APPLE)

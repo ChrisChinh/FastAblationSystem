@@ -48,7 +48,7 @@
 /* This function converts the mask of options defined by the options parameter
    and sets the options_str parameter, which is passed by reference, to a
    comma separated string respresentation of the options. */
-void convert_options_to_string(uint32_t options, char* options_str)
+inline void convert_options_to_string(uint32_t options, char* options_str)
 {
     if (options_str == NULL)
         return;
@@ -88,7 +88,7 @@ void convert_options_to_string(uint32_t options, char* options_str)
 /* This function converts the trigger mode defined by the trigger_mode
    parameter to a string representation and returns the string
    respresentation of the trigger mode. */
-void convert_trigger_mode_to_string(uint8_t trigger_mode,
+inline void convert_trigger_mode_to_string(uint8_t trigger_mode,
     char* trigger_mode_str)
 {
     if (trigger_mode_str == NULL)
@@ -116,7 +116,7 @@ void convert_trigger_mode_to_string(uint8_t trigger_mode,
 /* This function converts the analog input mode defined by the mode
    parameter to a string representation and returns the string
    respresentation of the input mode. */
-void convert_input_mode_to_string(uint8_t mode, char* mode_str)
+inline void convert_input_mode_to_string(uint8_t mode, char* mode_str)
 {
     if (mode_str == NULL)
         return;
@@ -137,7 +137,7 @@ void convert_input_mode_to_string(uint8_t mode, char* mode_str)
 /* This function converts the analog input range defined by the range
    parameter to a string representation and returns the string
    respresentation of the input range. */
-void convert_input_range_to_string(uint8_t range, char* range_str)
+inline void convert_input_range_to_string(uint8_t range, char* range_str)
 {
     if (range_str == NULL)
         return;
@@ -164,7 +164,7 @@ void convert_input_range_to_string(uint8_t range, char* range_str)
 /* This function converts the thermocouple type defined by the tc_type
    parameter to a string representation and returns the string
    respresentation. */
-void convert_tc_type_to_string(uint8_t tc_type,
+inline void convert_tc_type_to_string(uint8_t tc_type,
     char* tc_type_str)
 {
     if (tc_type_str == NULL)
@@ -208,7 +208,7 @@ void convert_tc_type_to_string(uint8_t tc_type,
 /* This function converts the mask of channels defined by the channel_mask
    parameter and sets the chans_str parameter, which is passed by reference,
    to a comma separated string respresentation of the channel numbers. */
-void convert_chan_mask_to_string(uint32_t channel_mask, char* chans_str)
+inline void convert_chan_mask_to_string(uint32_t channel_mask, char* chans_str)
 {
     int i = 0;
     char chan_string[16];
@@ -235,7 +235,7 @@ void convert_chan_mask_to_string(uint32_t channel_mask, char* chans_str)
    parameter and sets the chans parameter, which is passed by reference,
    to an array of channel numbers.
    The return value is an integer representing the number of channels. */
-int convert_chan_mask_to_array(uint32_t channel_mask, int chans[])
+inline int convert_chan_mask_to_array(uint32_t channel_mask, int chans[])
 {
     int i = 0;
     int chan_count = 0;
@@ -262,7 +262,7 @@ int convert_chan_mask_to_array(uint32_t channel_mask, int chans[])
  ****************************************************************************/
 /* This function takes a result code as the result parameter and if the
    result code is not RESULT_SUCCESS, the error message is sent to stderr. */
-void print_error(int result)
+inline void print_error(int result)
 {
     if (result != RESULT_SUCCESS)
     {
@@ -270,14 +270,14 @@ void print_error(int result)
     }
 }
 
-void resetCursor() {printf("\033[1;1H");}
-void clearEOL() {printf("\033[2K");}
-void cursorUp() {printf("\033[A");}
+inline void resetCursor() {printf("\033[1;1H");}
+inline void clearEOL() {printf("\033[2K");}
+inline void cursorUp() {printf("\033[A");}
 
 /****************************************************************************
  * User input functions
  ****************************************************************************/
-void flush_stdin(void)
+inline void flush_stdin(void)
 {
     int c;
 
@@ -287,7 +287,7 @@ void flush_stdin(void)
     } while (c != '\n' && c != EOF);
 }
 
-int enter_press()
+inline int enter_press()
 {
     int stdin_value = 0;
     struct timeval tv;
@@ -311,7 +311,7 @@ int enter_press()
    to select a device to use with the associated example.  The address
    parameter, which is passed by reference, is set to the selected address.
    The return value is 0 for success and -1 for error.*/
-int select_hat_device(uint16_t hat_filter_id, uint8_t* address)
+inline int select_hat_device(uint16_t hat_filter_id, uint8_t* address)
 {
     struct HatInfo* hats = NULL;
     int hat_count = 0;
