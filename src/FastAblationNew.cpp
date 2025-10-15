@@ -56,10 +56,21 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 	}
 }
 
+void GenerateSquareWave(int numSamples, double* buffer) {
+	for (int i = 0; i < numSamples; i++) {
+		if (i < numSamples / 2) {
+			buffer[i] = 5.0;
+		}
+		else {
+			buffer[i] = 0.0;
+		}
+	}
+}
+
 int main() {
 	DAQControl daq = DAQControl("20BF9C2");
 	double buffer[1000];
-	CreateOutputData(500, 2, buffer);
+	GenerateSquareWave(1000, buffer);
 	while (true) {
 	for (int i = 0; i < 1000; i++) {
 		daq.setAnalogOut(0, buffer[i]);
