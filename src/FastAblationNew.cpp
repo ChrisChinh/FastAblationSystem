@@ -71,10 +71,18 @@ int main() {
 	DAQControl daq = DAQControl("20BF9C2");
 	double buffer[1000];
 	GenerateSquareWave(1000, buffer);
-	while (true) {
+	uint64_t totalTime = 0;
+	int j = 0;
+	while (j < 10000) {
 	for (int i = 0; i < 1000; i++) {
+		uint64_t start = daq.getTimeinMicroseconds();
 		daq.setAnalogOut(0, buffer[i]);
+		uint64_t end = daq.getTimeinMicroseconds();
+		totalTime += end - start;
 	}
+	j ++;
 }
+	cout << "Total time taken: " << totalTime << endl;
+
 	return 0;
 }

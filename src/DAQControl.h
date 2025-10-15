@@ -2,12 +2,11 @@
 #define DAQ_CONTROL_H
 
 #include <iostream>
-#include <stdint.h>
 #include <stdlib.h>
 #include "../include/daqhats_utils.h"
-#include <string.h>
 #include <vector>
-#include <thread>
+#include <unistd.h> // For usleep
+#include <sys/time.h>
 
 using namespace std;
 #define CHANNEL 0
@@ -18,7 +17,6 @@ using namespace std;
 class DAQControl
 {
 private:
-    // Range of the analog voltage.
 
     // Name of the board.
     char boardName[8];
@@ -29,6 +27,8 @@ private:
     int portType;
 
 public:
+    uint64_t getTimeinMicroseconds();
+
     DAQControl(std::string unique_id);
     ~DAQControl();
 
@@ -39,7 +39,7 @@ public:
     int setDigitalOut(uint8_t port_num, bool value);
 
     // Scan an Analog output
-    int analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages, bool blocking = true, double rate = 5000);
+    int analogScanOut(uint8_t low_chan, vector<double> voltages, bool blocking = true, double rate = 5000);
 };
 
 #endif

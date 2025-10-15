@@ -33,6 +33,13 @@ DAQControl::DAQControl(std::string unique_id) {
 DAQControl::~DAQControl() {
 }
 
+uint64_t DAQControl::getTimeinMicroseconds() {
+   struct timeval tv;
+   gettimeofday(&tv, NULL);
+   uint64_t time_in_micros = 1000000 * tv.tv_sec + tv.tv_usec;
+   return time_in_micros;
+}
+
 int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 	return mcc152_a_out_write(address, channel, OPTIONS, voltage);
 }
@@ -41,7 +48,11 @@ int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
 	return mcc152_dio_output_write_bit(address, port_num, value);
 }
 
-int DAQControl::analogScanOut(uint8_t low_chan, uint8_t high_chan, vector<double> voltages,  bool blocking, double rate) {
+int DAQControl::analogScanOut(uint8_t chan, vector<double> voltages, bool blocking, double rate) {
+   double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   for (auto voltage : voltages) {
+      setAnalogOut(chan, voltage);
+   }
 	return 0;
 }
 
