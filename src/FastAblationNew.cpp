@@ -58,7 +58,7 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 
 void GenerateSquareWave(int numSamples, double* buffer) {
 	for (int i = 0; i < numSamples; i++) {
-		if (i < numSamples / 2) {
+		if (i % 2 == 0) {
 			buffer[i] = 5.0;
 		}
 		else {
