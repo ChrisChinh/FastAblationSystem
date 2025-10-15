@@ -4,25 +4,26 @@
 #include <iostream>
 #include <stdint.h>
 #include <stdlib.h>
-#include "../include/uldaq.h"
+#include "../include/daqhats_utils.h"
 #include <string.h>
 #include <vector>
 #include <thread>
 
 using namespace std;
+#define CHANNEL 0
+#define OPTIONS OPTS_DEFAULT
 
+#define BUFFER_SIZE 32
 
 class DAQControl
 {
 private:
     // Range of the analog voltage.
-    Range range;
 
     // Name of the board.
     char boardName[8];
 
     // DAQ Device Descriptor.
-	DaqDeviceHandle handle;
 
     int portType;
 
