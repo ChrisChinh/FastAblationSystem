@@ -73,7 +73,7 @@ int main() {
 	GenerateSquareWave(1000, buffer);
 	uint64_t totalTime = 0;
 	int j = 0;
-	while (j < 10000) {
+	while (j < 100) {
 	for (int i = 0; i < 1000; i++) {
 		uint64_t start = daq.getTimeinMicroseconds();
 		daq.setAnalogOut(0, buffer[i]);
@@ -82,7 +82,7 @@ int main() {
 	}
 	j ++;
 }
-	cout << "Total time taken: " << totalTime << endl;
+	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 
 	return 0;
 }
