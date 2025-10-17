@@ -36,7 +36,7 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 	int i, j;
 
 	double min = 0.0;
-	double max = 1.0; // used to be 5 - cblack
+	double max = 5.0;
 
 	double amplitude =  max - min;
 	double f = twoPI * frequency / numberOfSamplesPerChannel;
