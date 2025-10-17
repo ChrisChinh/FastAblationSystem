@@ -60,7 +60,7 @@ double DAQControl::getIdealRate(uint8_t num_iterations) {
    setAnalogOut(0, 0);
    double time = getTimeinMicroseconds();
    for (int i = 0; i < num_iterations; i++) {
-      setAnalogOut(0, 1);
+      setAnalogOut(0, 5);
       setAnalogOut(0, 0);
    }
    time = getTimeinMicroseconds() - time;
