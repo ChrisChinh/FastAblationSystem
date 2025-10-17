@@ -70,8 +70,9 @@ void GenerateSquareWave(int numSamples, double* buffer) {
 int main() {
 	DAQControl daq = DAQControl("20BF9C2");
 	auto start = daq.getTimeinMicroseconds();
-	double rate = daq.getIdealRate(1);
-	cout << "Ideal rate according to DAQ: " << rate << endl;
+	int num_iterations = 20;
+	double rate = daq.getIdealRate(num_iterations);
+	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
 	double buffer[(int)rate];
 	int totalTime = 0;
 
