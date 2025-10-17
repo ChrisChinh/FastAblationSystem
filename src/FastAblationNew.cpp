@@ -73,13 +73,13 @@ int main() {
 	uint16_t num_iterations = 60000;
 	double rate = daq.getIdealRate(num_iterations);
 	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
-	double buffer[(int)rate];
-	int totalTime = 0;
+	double buffer[(uint16_t)rate];
+	uint16_t totalTime = 0;
 
-	CreateOutputData((int)rate, 1, buffer, 375);
-	for (int i = 0; i < 100; i++) {
+	CreateOutputData((uint16_t)rate, 1, buffer, 375);
+	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
-		daq.analogScanOut(0, vector<double>(buffer, buffer + (int)rate), true, rate);
+		daq.analogScanOut(0, vector<double>(buffer, buffer + (uint16_t)rate), true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
 	}

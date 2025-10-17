@@ -65,6 +65,6 @@ double DAQControl::getIdealRate(uint16_t num_iterations) {
    }
    time = getTimeinMicroseconds() - time;
    double avgTime = time /  (2 * num_iterations);
-   return 1e6 / avgTime;
+   return (double)1e6 / avgTime;
 }
 
