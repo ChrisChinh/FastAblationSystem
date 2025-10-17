@@ -56,7 +56,7 @@ int DAQControl::analogScanOut(uint8_t chan, vector<double> voltages, bool blocki
 	return 0;
 }
 
-double DAQControl::getIdealRate(uint8_t num_iterations) {
+double DAQControl::getIdealRate(uint16_t num_iterations) {
    setAnalogOut(0, 0);
    double time = getTimeinMicroseconds();
    for (int i = 0; i < num_iterations; i++) {
