@@ -40,6 +40,8 @@ public:
 
     // Scan an Analog output
     int analogScanOut(uint8_t low_chan, vector<double> voltages, bool blocking = true, double rate = 5000);
+
+    double getIdealRate();
 };
 
 #endif

@@ -30,7 +30,7 @@ enum string_code {
 };
 
 
-void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffer)
+void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffer, double frequency)
 {
 	const double twoPI = 2 * 3.14159265358979323846;
 	int i, j;
@@ -39,7 +39,7 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 	double max = 5.0;
 
 	double amplitude =  max - min;
-	double f = twoPI / numberOfSamplesPerChannel;
+	double f = twoPI * frequency / numberOfSamplesPerChannel;
 	double phase = 0.0;
 	double offset = (min == 0) ? amplitude/2 : 0;
 
@@ -69,19 +69,20 @@ void GenerateSquareWave(int numSamples, double* buffer) {
 
 int main() {
 	DAQControl daq = DAQControl("20BF9C2");
-	double buffer[1000];
-	GenerateSquareWave(1000, buffer);
-	uint64_t totalTime = 0;
-	int j = 0;
-	while (j < 100) {
-	for (int i = 0; i < 1000; i++) {
-		uint64_t start = daq.getTimeinMicroseconds();
-		daq.setAnalogOut(0, buffer[i]);
-		uint64_t end = daq.getTimeinMicroseconds();
-		totalTime += end - start;
+	auto start = daq.getTimeinMicroseconds();
+	double rate = daq.getIdealRate();
+	cout << "Ideal rate according to DAQ: " << rate << endl;
+	double buffer[(int)rate];
+	int totalTime = 0;
+
+	CreateOutputData((int)rate, 1, buffer, 375);
+	for (int i = 0; i < 100; i++) {
+		auto scanStart = daq.getTimeinMicroseconds();
+		daq.analogScanOut(0, vector<double>(buffer, buffer + (int)rate), true, rate);
+		auto scanEnd = daq.getTimeinMicroseconds();
+		totalTime += (scanEnd - scanStart);
 	}
-	j ++;
-}
+
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 
 	return 0;
