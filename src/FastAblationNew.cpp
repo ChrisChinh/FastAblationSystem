@@ -2,8 +2,9 @@
 //
 
 #include <iostream>
-#include "GalvoControl.h"
 #include <stdint.h>
+#include "DAQControl.h"
+#include "DataReciever.h"
 #include <cmath>
 
 using namespace std;
@@ -67,7 +68,7 @@ void GenerateSquareWave(int numSamples, double* buffer) {
 	}
 }
 
-int main() {
+void test() {
 	DAQControl daq = DAQControl("20BF9C2");
 	auto start = daq.getTimeinMicroseconds();
 	uint16_t num_iterations = 60000;
@@ -85,6 +86,15 @@ int main() {
 	}
 
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
+}
 
-	return 0;
+
+int main()
+{
+	DataReciever r("10.10.10.10", 50007);
+	while (true) {
+		auto data = r.receiveData();
+		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
+	}
+
 }
