@@ -1,3 +1,3 @@
 #!/bin/bash
 cmake --build build
-./build/bash/FastAblationNew
+./build/bin/FastAblationNew
