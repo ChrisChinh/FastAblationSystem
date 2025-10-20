@@ -131,7 +131,7 @@ void triangleWaveTest(){
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
-void triangle_and_sinusoid_test(){
+void two_triangles_test(){
 	DAQControl daq = DAQControl("20BF9C2");
 	cout << "Starting triangle wave test..." << endl;
 	auto start = daq.getTimeinMicroseconds();
@@ -154,6 +154,38 @@ void triangle_and_sinusoid_test(){
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
+void zipped_triangles_test(){
+	// setup
+	DAQControl daq = DAQControl("20BF9C2");
+	cout << "Starting triangle wave test..." << endl;
+	auto start = daq.getTimeinMicroseconds();
+	uint16_t num_iterations = 60000;
+	double rate = daq.getIdealRate_all(num_iterations);
+	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
+	
+	// create buffers
+	double triangle_buffer_375[(uint16_t)rate];
+	double triangle_buffer_550[(uint16_t)rate];
+	GenerateTriangleWave((uint16_t)rate, 375, triangle_buffer_375);
+	GenerateTriangleWave((uint16_t)rate, 550, triangle_buffer_550);
+	// zip buffers
+	double zipped_buffer[(uint16_t)rate * 2];
+	for (uint16_t i = 0; i < (uint16_t)rate; i++) {
+		zipped_buffer[2 * i] = triangle_buffer_375[i];
+		zipped_buffer[(2 * i) + 1] = triangle_buffer_550[i];
+	}
+
+	uint16_t totalTime = 0;
+	for (uint8_t i = 0; i < 100; i++) {
+		auto scanStart = daq.getTimeinMicroseconds();
+		daq.analogScanOut_all_given_zipped_buffers(zipped_buffer, (uint16_t)rate, true, rate);
+		auto scanEnd = daq.getTimeinMicroseconds();
+		totalTime += (scanEnd - scanStart);
+	}
+
+	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
+}
+
 int main()
 {
 
@@ -162,7 +194,7 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	triangle_and_sinusoid_test();
+	two_triangles_test();
 	return 0;
 
 }

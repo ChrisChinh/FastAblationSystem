@@ -79,6 +79,16 @@ int DAQControl::analogScanOut_all_given_two_buffers(double* buffer_1, double* bu
    return 0;
 }
 
+int DAQControl::analogScanOut_all_given_zipped_buffers(double* buffer, uint16_t buffer_length, bool blocking, double rate)
+{
+   double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   // zip the buffers together
+   for (uint16_t i = 0; i < buffer_length; i += 2) {
+      setAnalogOut_all(&buffer[i]);
+   }
+   return 0;
+}
+
 int DAQControl::analogScanOut_all_given_two_buffers_zipped(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking, double rate)
 {
    double waitTime = (1.0 / rate) * 1e6; // in microseconds
