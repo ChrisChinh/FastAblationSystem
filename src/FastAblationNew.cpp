@@ -131,6 +131,28 @@ void triangleWaveTest(){
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
+void triangle_and_sinusoid_test(){
+	DAQControl daq = DAQControl("20BF9C2");
+	cout << "Starting triangle wave test..." << endl;
+	auto start = daq.getTimeinMicroseconds();
+	uint16_t num_iterations = 60000;
+	double rate = daq.getIdealRate(num_iterations);
+	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
+	double triangle_buffer[(uint16_t)rate];
+	double sin_buffer[(uint16_t)rate];
+	uint16_t totalTime = 0;
+
+	GenerateTriangleWave((uint16_t)rate, 375, triangle_buffer);
+	CreateOutputData((uint16_t)rate, 375, sin_buffer);
+	for (uint8_t i = 0; i < 100; i++) {
+		auto scanStart = daq.getTimeinMicroseconds();
+		daq.analogScanOut(0, vector<double>(buffer, buffer + (uint16_t)rate), true, rate);
+		auto scanEnd = daq.getTimeinMicroseconds();
+		totalTime += (scanEnd - scanStart);
+	}
+
+	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
+}
 
 int main()
 {

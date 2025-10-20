@@ -44,6 +44,10 @@ int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 	return mcc152_a_out_write(address, channel, OPTIONS, voltage);
 }
 
+int DAQControl::setAnalogOut_all(double* voltages) {
+   return mcc152_a_out_write_all(address, OPTIONS, voltages);
+}
+
 int DAQControl::setDigitalOut(uint8_t port_num, bool value) {
 	return mcc152_dio_output_write_bit(address, port_num, value);
 }
@@ -54,6 +58,24 @@ int DAQControl::analogScanOut(uint8_t chan, vector<double> voltages, bool blocki
       setAnalogOut(chan, voltage);
    }
 	return 0;
+}
+
+int DAQControl::analogScanOut_all(vector<double*> voltage_pairs, bool blocking, double rate) {
+   double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   for (auto voltage_pair : voltage_pairs) {
+      setAnalogOut_all(voltage_pair);
+   }
+   return 0;
+}
+
+int DAQControl::analogScanOut_all_given_two_buffers(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking, double rate)
+{
+   double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   for(int i = 0; i < buffer_length; i++){
+      double voltage_tuple[2] = {buffer_1[i], buffer_2[i]};
+      setAnalogOut_all(voltage_tuple);
+   }
+   return 0;
 }
 
 double DAQControl::getIdealRate(uint16_t num_iterations) {
