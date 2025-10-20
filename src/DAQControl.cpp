@@ -71,9 +71,14 @@ int DAQControl::analogScanOut_all(vector<double*> voltage_pairs, bool blocking, 
 int DAQControl::analogScanOut_all_given_two_buffers(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking, double rate)
 {
    double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   // zip the buffers together
+   double zipped_voltage_tuples[buffer_length * 2];
+   for (uint16_t i = 0; i < buffer_length; i++) {
+      zipped_voltage_tuples[2 * i] = buffer_1[i];
+      zipped_voltage_tuples[(2 * i) + 1] = buffer_2[i];
+   }
    for(int i = 0; i < buffer_length; i++){
-      double voltage_tuple[2] = {buffer_1[i], buffer_2[i]};
-      setAnalogOut_all(voltage_tuple);
+      mcc152_a_out_write_all(address, OPTIONS, &zipped_voltage_tuples[i * 2]);
    }
    return 0;
 }
@@ -89,4 +94,17 @@ double DAQControl::getIdealRate(uint16_t num_iterations) {
    double avgTime = time /  (2 * num_iterations);
    return (double)1e6 / avgTime;
 }
+
+double DAQControl::getIdealRate_all(uint16_t num_iterations) {
+   setAnalogOut(0, 0);
+   double time = getTimeinMicroseconds();
+   for (uint16_t i = 0; i < num_iterations; i++) {
+      setAnalogOut(0, 5);
+      setAnalogOut(0, 0);
+   }
+   time = getTimeinMicroseconds() - time;
+   double avgTime = time /  (2 * num_iterations);
+   return (double)1e6 / avgTime;
+}
+
 
