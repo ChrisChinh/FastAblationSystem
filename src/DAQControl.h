@@ -51,6 +51,8 @@ public:
     // Set an Analog output wby passing in a pair of buffers
     int analogScanOut_all_given_two_buffers(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
 
+    int analogScanOut_all_given_two_buffers_zipped(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
+
     double getIdealRate(uint16_t num_iterations);
     double getIdealRate_all(uint16_t num_iterations);
 };

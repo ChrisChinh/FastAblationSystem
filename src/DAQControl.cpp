@@ -72,6 +72,17 @@ int DAQControl::analogScanOut_all_given_two_buffers(double* buffer_1, double* bu
 {
    double waitTime = (1.0 / rate) * 1e6; // in microseconds
    // zip the buffers together
+   for (uint16_t i = 0; i < buffer_length; i++) {
+      double voltages[2] = {buffer_1[i], buffer_2[i]};
+      setAnalogOut_all(voltages);
+   }
+   return 0;
+}
+
+int DAQControl::analogScanOut_all_given_two_buffers_zipped(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking, double rate)
+{
+   double waitTime = (1.0 / rate) * 1e6; // in microseconds
+   // zip the buffers together
    double zipped_voltage_tuples[buffer_length * 2];
    for (uint16_t i = 0; i < buffer_length; i++) {
       zipped_voltage_tuples[2 * i] = buffer_1[i];
