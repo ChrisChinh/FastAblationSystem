@@ -95,16 +95,4 @@ double DAQControl::getIdealRate(uint16_t num_iterations) {
    return (double)1e6 / avgTime;
 }
 
-double DAQControl::getIdealRate_all(uint16_t num_iterations) {
-   setAnalogOut(0, 0);
-   double time = getTimeinMicroseconds();
-   for (uint16_t i = 0; i < num_iterations; i++) {
-      setAnalogOut(0, 5);
-      setAnalogOut(0, 0);
-   }
-   time = getTimeinMicroseconds() - time;
-   double avgTime = time /  (2 * num_iterations);
-   return (double)1e6 / avgTime;
-}
-
 
