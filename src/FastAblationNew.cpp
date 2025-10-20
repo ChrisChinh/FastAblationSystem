@@ -74,7 +74,7 @@ void GenerateTriangleWave(int numberOfSamplesPerSecond, double frequency, double
 	double max = 5.0;
 
 	double amplitude =  max - min;
-	double numberOfSamplesPerPeriod = frequency / numberOfSamplesPerSecond;
+	double numberOfSamplesPerPeriod = numberOfSamplesPerSecond / frequency;
 
 	for (int i=0; i<numberOfSamplesPerSecond; i++)
 	{
