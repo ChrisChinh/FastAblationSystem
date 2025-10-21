@@ -12,6 +12,7 @@ public:
     ~DataReciever();
 
     vector<vector<double>> receiveData();
+    int reconnect();
 
 private:
     string ip;

@@ -30,6 +30,14 @@ DataReciever::~DataReciever() {
 
 }
 
+int DataReciever::reconnect() {
+    close(client_fd);
+    cout << "Waiting for a new connection on port " << port << "..." << endl;
+    client_fd = accept(server_fd, NULL, NULL);
+    cout << "Client reconnected." << endl;
+    return 0;
+}
+
 ssize_t DataReciever::recvAll(int socket, void* buffer, size_t length) {
     size_t total = 0;
     while (total < length) {

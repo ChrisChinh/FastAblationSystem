@@ -220,6 +220,8 @@ int main()
 	while (true) {
 		auto data = r.receiveData();
 		if (data.size() == 0) {
+			cout << "No data received, reconnecting..." << endl;
+			
 			continue;
 		}
 		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
