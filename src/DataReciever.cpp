@@ -45,7 +45,7 @@ vector<vector<double>> DataReciever::receiveData() {
     // Implementation of receiveData method
     unsigned int rows, cols;
     ssize_t r = recvAll(client_fd, &rows, sizeof(rows));
-    if (r <= 0) throw std::runtime_error("Failed to receive data");
+    if (r <= 0) return vector<vector<double>>(); // Return empty on error   
     recvAll(client_fd, &cols, sizeof(cols));
 
     size_t totalElements = (size_t) rows * cols;
