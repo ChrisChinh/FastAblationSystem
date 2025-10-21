@@ -142,10 +142,18 @@ double DAQControl::getIdealRate_hybrid(uint16_t num_iterations) {
    return (double)1e6 / avgTime;
 }
 
-int DAQControl::hybridScanOut(uint8_t analogChan, uint8_t digitalPort, double* voltages, bool* digitalValues, uint16_t bufferSize) {
-   for (uint16_t i = 0; i < bufferSize; i++) {
-      setAnalogOut(analogChan, voltages[i]);
-      setDigitalOut(digitalPort, digitalValues[i]);
+bool DAQControl::drawLine(double x1, double y1, double x2, double y2, int frequency, double rate) {
+   int points_per_line = (int)(rate / frequency);
+   double dx = (x2 - x1) / points_per_line;
+   double dy = (y2 - y1) / points_per_line;
+   double* x_buf = new double[points_per_line];
+   double* y_buf = new double[points_per_line];
+   for (int i = 0; i < points_per_line; i++) {
+      x_buf[i] = x1 + i * dx;
+      y_buf[i] = y1 + i * dy;
    }
-   return 0;
+   int result = analogScanOut_all_given_two_buffers(x_buf, y_buf, points_per_line, true, rate);
+   delete[] x_buf;
+   delete[] y_buf;
+   return result == 0;
 }
