@@ -219,6 +219,9 @@ int main()
 	DataReciever r("10.10.10.10", 50007);
 	while (true) {
 		auto data = r.receiveData();
+		if (data.size() == 0) {
+			continue;
+		}
 		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	}
 	//two_triangles_test();
