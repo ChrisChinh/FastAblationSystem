@@ -13,6 +13,8 @@ public:
 
     vector<vector<double>> receiveData();
     int reconnect();
+    void sendDouble(double value);
+
 
 private:
     string ip;

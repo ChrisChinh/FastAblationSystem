@@ -220,6 +220,9 @@ int main()
 	cout << "Ideal rate according to DAQ: " << rate << endl;
 
 	DataReciever r("10.10.10.10", 50007);
+	r.sendDouble(rate);
+
+	
 	while (true) {
 		auto data = r.receiveData();
 		if (data.size() == 0) {

@@ -73,3 +73,7 @@ vector<vector<double>> DataReciever::receiveData() {
     delete[] data;
     return result;
 }
+
+void DataReciever::sendDouble(double value) {
+    send(client_fd, &value, sizeof(value), 0);
+}
