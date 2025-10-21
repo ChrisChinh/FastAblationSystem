@@ -215,16 +215,33 @@ void hybrid_test() {
 
 int main()
 {
+	DAQControl daq = DAQControl("20BF9C2");
+	double rate = daq.getIdealRate_all(6000);
+	cout << "Ideal rate according to DAQ: " << rate << endl;
 
 	DataReciever r("10.10.10.10", 50007);
 	while (true) {
 		auto data = r.receiveData();
 		if (data.size() == 0) {
 			cout << "No data received, reconnecting..." << endl;
-			
+			r.reconnect();
 			continue;
 		}
+		int rows = data.size();
+		int cols = data[0].size();
 		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
+
+		if (rows != 2) {
+			cout << "Expected 2 rows of data (for 2 channels), but received " << rows << " rows." << endl;
+			continue;
+		}
+		double* buffer_1 = new double[cols];
+		double* buffer_2 = new double[cols];
+		for (int i = 0; i < cols; i++) {
+			buffer_1[i] = data[0][i];
+			buffer_2[i] = data[1][i];
+		}
+		daq.analogScanOut_all_given_two_buffers(buffer_1, buffer_2, cols, true, rate);
 	}
 	//two_triangles_test();
 	//hybrid_test();
