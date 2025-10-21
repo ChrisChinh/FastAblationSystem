@@ -54,6 +54,8 @@ public:
     int analogScanOut_all_given_two_buffers_zipped(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
 
     int analogScanOut_all_given_zipped_buffers(double* buffer, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
+
+    int hybridScanOut(uint8_t analogChan, uint8_t digitalPort, double* voltages, bool* digitalValues, uint16_t bufferSize);
     double getIdealRate(uint16_t num_iterations);
     double getIdealRate_all(uint16_t num_iterations);
 };

@@ -130,3 +130,10 @@ double DAQControl::getIdealRate_all(uint16_t num_iterations) {
 }
 
 
+int DAQControl::hybridScanOut(uint8_t analogChan, uint8_t digitalPort, double* voltages, bool* digitalValues, uint16_t bufferSize) {
+   for (uint16_t i = 0; i < bufferSize; i++) {
+      setAnalogOut(analogChan, voltages[i]);
+      setDigitalOut(digitalPort, digitalValues[i]);
+   }
+   return 0;
+}

@@ -57,13 +57,13 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 	}
 }
 
-void GenerateSquareWave(int numSamples, double* buffer, double frequency) {
+void GenerateSquareWave(int numSamples, bool* buffer, double frequency) {
 	for (int i = 0; i < numSamples; i++) {
 		if (i % (int)(numSamples / frequency) == 0) {
-			buffer[i] = 5.0;
+			buffer[i] = true;
 		}
 		else {
-			buffer[i] = 0.0;
+			buffer[i] = false;
 		}
 	}
 }
@@ -186,6 +186,32 @@ void zipped_triangles_test(){
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
+void hybrid_test() {
+	DAQControl daq = DAQControl("20BF9C2");
+	cout << "Starting hybrid wave test..." << endl;
+	double idealRate = daq.getIdealRate(500);
+	cout << "Ideal rate according to DAQ: " << idealRate << endl;
+
+	// Plan to use 1 seconds worth of data
+	const uint16_t bufferSize = (uint16_t)idealRate;
+	double* analogBuffer = new double[bufferSize];
+	bool* digitalBuffer = new bool[bufferSize];
+
+	GenerateTriangleWave(bufferSize, 375, analogBuffer);
+	GenerateSquareWave(bufferSize, digitalBuffer, 50);
+
+	auto start = daq.getTimeinMicroseconds();
+	int numIterations = 100;
+	for (int i = 0; i < numIterations; i++) {
+		daq.hybridScanOut(0, 0, analogBuffer, digitalBuffer, bufferSize);
+	}
+	auto end = daq.getTimeinMicroseconds();
+	double averageTime = (end - start) / numIterations;
+
+	cout << "Average time for hybrid scan out: " << averageTime << " us" << endl;
+
+}
+
 int main()
 {
 
@@ -194,7 +220,8 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	two_triangles_test();
+	//two_triangles_test();
+	hybrid_test();
 	return 0;
 
 }
