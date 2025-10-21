@@ -216,13 +216,13 @@ void hybrid_test() {
 int main()
 {
 
-	// DataReciever r("10.10.10.10", 50007);
-	// while (true) {
-	// 	auto data = r.receiveData();
-	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
-	// }
+	DataReciever r("10.10.10.10", 50007);
+	while (true) {
+		auto data = r.receiveData();
+		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
+	}
 	//two_triangles_test();
-	hybrid_test();
+	//hybrid_test();
 	return 0;
 
 }
