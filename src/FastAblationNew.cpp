@@ -12,7 +12,7 @@ using namespace std;
 int main()
 {
 	DAQControl daq = DAQControl("20BF9C2");
-	double rate = daq.getIdealRate_all(6000);
+	double rate = daq.getIdealRate_all(60000);
 	cout << "Ideal rate according to DAQ: " << rate << endl;
 
 	DataReciever r("10.10.10.10", 50007);
