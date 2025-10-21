@@ -58,8 +58,9 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 }
 
 void GenerateSquareWave(int numSamples, bool* buffer, double frequency) {
+	int samplePeriod = (int)(numSamples / frequency);
 	for (int i = 0; i < numSamples; i++) {
-		if (i % (int)(numSamples / frequency) == 0) {
+		if ((i % samplePeriod) < (samplePeriod / 2)) {
 			buffer[i] = true;
 		}
 		else {
@@ -189,7 +190,7 @@ void zipped_triangles_test(){
 void hybrid_test() {
 	DAQControl daq = DAQControl("20BF9C2");
 	cout << "Starting hybrid wave test..." << endl;
-	double idealRate = daq.getIdealRate(500);
+	double idealRate = daq.getIdealRate_hybrid(500);
 	cout << "Ideal rate according to DAQ: " << idealRate << endl;
 
 	// Plan to use 1 seconds worth of data

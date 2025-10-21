@@ -58,6 +58,7 @@ public:
     int hybridScanOut(uint8_t analogChan, uint8_t digitalPort, double* voltages, bool* digitalValues, uint16_t bufferSize);
     double getIdealRate(uint16_t num_iterations);
     double getIdealRate_all(uint16_t num_iterations);
+    double getIdealRate_hybrid(uint16_t num_iterations);
 };
 
 #endif

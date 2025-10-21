@@ -129,6 +129,18 @@ double DAQControl::getIdealRate_all(uint16_t num_iterations) {
    return (double)1e6 / avgTime;
 }
 
+double DAQControl::getIdealRate_hybrid(uint16_t num_iterations) {
+   double time = getTimeinMicroseconds();
+   for (uint16_t i = 0; i < num_iterations; i++) {
+      setAnalogOut(0, 5);
+      setDigitalOut(0, true);
+      setAnalogOut(0, 0);
+      setDigitalOut(0, false);
+   }
+   time = getTimeinMicroseconds() - time;
+   double avgTime = time /  (4 * num_iterations);
+   return (double)1e6 / avgTime;
+}
 
 int DAQControl::hybridScanOut(uint8_t analogChan, uint8_t digitalPort, double* voltages, bool* digitalValues, uint16_t bufferSize) {
    for (uint16_t i = 0; i < bufferSize; i++) {
