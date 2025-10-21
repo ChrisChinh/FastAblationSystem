@@ -18,6 +18,7 @@ DataReciever::DataReciever(string ip, int port) {
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     bind(server_fd, (struct sockaddr*)&addr, sizeof(addr));
     listen(server_fd, 1);
+    this->port = port;
 
     cout << "Waiting for a connection on port " << port << "..." << endl;
     client_fd = accept(server_fd, NULL, NULL);
