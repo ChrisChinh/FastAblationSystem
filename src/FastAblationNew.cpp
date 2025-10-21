@@ -42,6 +42,7 @@ int main()
 		
 		int bufferSize = cols;
 		int frequency = data[0][0]; // First element is frequency
+		cout << "Drawing " << (bufferSize - 1) << " lines at frequency " << frequency << " Hz." << endl;
 		for (int i = 1; i < bufferSize; i++) {
 			// Unpack the points for each line
 			double x1 = data[0][i];
