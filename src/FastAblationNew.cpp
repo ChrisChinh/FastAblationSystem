@@ -194,7 +194,7 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	two_triangles_test();
+	triangleWaveTest();
 	return 0;
 
 }
