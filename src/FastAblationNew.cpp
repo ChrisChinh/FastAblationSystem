@@ -144,8 +144,8 @@ void two_triangles_test(){
 	double triangle_buffer_550[(uint16_t)rate];
 	uint16_t totalTime = 0;
 
-	GenerateTriangleWave((uint16_t)rate, 375, triangle_buffer_375);
-	GenerateTriangleWave((uint16_t)rate, 375, triangle_buffer_550);
+	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_375);
+	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_550);
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
 		daq.analogScanOut_all_given_two_buffers(triangle_buffer_375, triangle_buffer_550, (uint16_t)rate, true, rate);
