@@ -14,6 +14,8 @@ public:
     vector<vector<double>> receiveData();
     int reconnect();
     void sendDouble(double value);
+    int receiveInt();
+    double receiveDouble();
 
 
 private:

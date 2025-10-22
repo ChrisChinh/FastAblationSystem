@@ -78,3 +78,15 @@ vector<vector<double>> DataReciever::receiveData() {
 void DataReciever::sendDouble(double value) {
     send(client_fd, &value, sizeof(value), 0);
 }
+
+int DataReciever::receiveInt() {
+    int value;
+    recvAll(client_fd, &value, sizeof(value));
+    return value;
+}
+
+double DataReciever::receiveDouble() {
+    double value;
+    recvAll(client_fd, &value, sizeof(value));
+    return value;
+}

@@ -25,6 +25,8 @@ private:
     // DAQ Device Descriptor.
     uint8_t address;
 
+    double chan0Voltage, chan1Voltage;
+
     int portType;
 
 public:
@@ -60,6 +62,9 @@ public:
     double getIdealRate(uint16_t num_iterations);
     double getIdealRate_all(uint16_t num_iterations);
     double getIdealRate_hybrid(uint16_t num_iterations);
+
+    // Get current position of galvos
+    double getVoltage(uint8_t channel);
 };
 
 #endif

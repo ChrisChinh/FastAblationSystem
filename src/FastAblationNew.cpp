@@ -6,24 +6,31 @@
 #include "DAQControl.h"
 #include "DataReciever.h"
 #include <cmath>
-
 using namespace std;
 
-int main()
-{
-	DAQControl daq = DAQControl("20BF9C2");
-	double rate = daq.getIdealRate_all(60000);
-	cout << "Ideal rate according to DAQ: " << rate << endl;
 
-	DataReciever r("10.10.10.10", 50007);
+typedef enum {
+	COMMAND_ABLATE_BUFFER,
+	COMMAND_GET_RATE,
+	COMMAND_LASER_ON,
+	COMMAND_LASER_OFF,
+	COMMAND_GALVO_HOME,
+	COMMAND_SET_GALVO_X,
+	COMMAND_SET_GALVO_Y,
+	COMMAND_GET_GALVO_POS
+} CommandType;
 
 
-	while (true) {
+// Globals
+DAQControl daq = DAQControl("20BF9C2");
+DataReciever r("10.10.10.10", 50007);
+
+void ablateBuffer(double rate) {
 		auto data = r.receiveData();
 		if (data.size() == 0) {
 			cout << "No data received, reconnecting..." << endl;
 			r.reconnect();
-			continue;
+			return;
 		}
 		int rows = data.size();
 		int cols = data[0].size();
@@ -31,12 +38,12 @@ int main()
 
 		if (rows != 4) {
 			cout << "Expected 4 rows of data (for 4 channels), but received " << rows << " rows." << endl;
-			continue;
+			return;
 		}
 
 		if (cols < 2) {
 			cout << "Expected at least 1 point and header information, but received " << cols << " columns." << endl;
-			continue;
+			return;
 		}
 		
 		int bufferSize = cols;
@@ -48,11 +55,89 @@ int main()
 			double y1 = data[1][i];
 			double x2 = data[2][i];
 			double y2 = data[3][i];
+			if (x1 == INFINITY && y1 == INFINITY && x2 == INFINITY && y2 == INFINITY) {
+				//This means turn on the laser
+				daq.setDigitalOut(0, true);
+				continue;
+			}
+			else if (x1 == -INFINITY && y1 == -INFINITY && x2 == -INFINITY && y2 == -INFINITY) {
+				//This means turn off the laser
+				daq.setDigitalOut(0, false);
+				continue;
+			}
 			
 			daq.drawLine(x1, y1, x2, y2, frequency, rate);
 
 		}
 		r.sendDouble(1.0); // Acknowledge receipt
+}
+
+
+inline void repl(double rate) {
+	CommandType command = (CommandType)r.receiveInt();
+	switch (command) {
+		case COMMAND_ABLATE_BUFFER:
+		{
+			r.sendDouble(1.0); // Acknowledge command receipt
+			ablateBuffer(rate);
+			break;
+		}
+		case COMMAND_GET_RATE:
+		{
+			r.sendDouble(rate);
+			break;
+		}
+		case COMMAND_LASER_ON:
+		{
+			daq.setDigitalOut(0, true);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_LASER_OFF:
+		{
+			daq.setDigitalOut(0, false);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_GALVO_HOME:
+		{
+			daq.setAnalogOut(0, 0.0);
+			daq.setAnalogOut(1, 0.0);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_SET_GALVO_X:
+		{
+			double x = r.receiveDouble();
+			daq.setAnalogOut(0, x);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_SET_GALVO_Y:
+		{
+			double y = r.receiveDouble();
+			daq.setAnalogOut(1, y);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_GET_GALVO_POS:
+		{
+			double x = daq.getVoltage(0);
+			double y = daq.getVoltage(1);
+			r.sendDouble(x);
+			r.sendDouble(y);
+			break;
+		}
+	}
+
+}
+
+int main()
+{
+	double rate = daq.getIdealRate_all(60000);
+	cout << "Ideal rate according to DAQ: " << rate << endl;
+	while (true) {
+		repl(rate);
 	}
 	return 0;
 

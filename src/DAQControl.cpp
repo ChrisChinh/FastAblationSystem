@@ -3,6 +3,8 @@
 #define DEFAULT_RANGE BIP10VOLTS
 
 DAQControl::DAQControl(std::string unique_id) {
+   chan0Voltage = 0.0;
+   chan1Voltage = 0.0;
    char options_str[256];
    convert_options_to_string(OPTIONS, options_str);
    select_hat_device(HAT_ID_MCC_152, &address);
@@ -31,6 +33,7 @@ DAQControl::DAQControl(std::string unique_id) {
 }
 
 DAQControl::~DAQControl() {
+   mcc152_close(address);
 }
 
 uint64_t DAQControl::getTimeinMicroseconds() {
@@ -45,6 +48,8 @@ int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
 }
 
 int DAQControl::setAnalogOut_all(double* voltages) {
+   chan0Voltage = voltages[0];
+   chan1Voltage = voltages[1];
    return mcc152_a_out_write_all(address, OPTIONS, voltages);
 }
 
@@ -156,4 +161,14 @@ bool DAQControl::drawLine(double x1, double y1, double x2, double y2, int freque
    delete[] x_buf;
    delete[] y_buf;
    return result == 0;
+}
+
+double DAQControl::getVoltage(uint8_t channel) {
+   if (channel == 0) {
+       return chan0Voltage;
+   } else if (channel == 1) {
+       return chan1Voltage;
+   } else {
+       throw std::out_of_range("Invalid channel number");
+   }
 }
