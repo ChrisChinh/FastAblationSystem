@@ -123,7 +123,7 @@ void triangleWaveTest(){
 	uint16_t totalTime = 0;
 
 	GenerateTriangleWave((uint16_t)rate, 375, buffer);
-	for (uint8_t i = 0; i < 100; i++) {
+	while(true) {
 		auto scanStart = daq.getTimeinMicroseconds();
 		daq.analogScanOut(CHANNEL, vector<double>(buffer, buffer + (uint16_t)rate), true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
