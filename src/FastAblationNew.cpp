@@ -138,7 +138,7 @@ void two_triangles_test(){
 	cout << "Starting triangle wave test..." << endl;
 	auto start = daq.getTimeinMicroseconds();
 	uint16_t num_iterations = 60000;
-	double rate = daq.getIdealRate_all(num_iterations);
+	double rate = 10000; //daq.getIdealRate_all(num_iterations);
 	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
 	double triangle_buffer_375[(uint16_t)rate];
 	double triangle_buffer_550[(uint16_t)rate];
