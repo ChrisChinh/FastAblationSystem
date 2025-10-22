@@ -9,6 +9,8 @@
 
 using namespace std;
 
+#define CHANNEL 1
+
 void test();
 
 // Controllers
@@ -123,7 +125,7 @@ void triangleWaveTest(){
 	GenerateTriangleWave((uint16_t)rate, 375, buffer);
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
-		daq.analogScanOut(0, vector<double>(buffer, buffer + (uint16_t)rate), true, rate);
+		daq.analogScanOut(CHANNEL, vector<double>(buffer, buffer + (uint16_t)rate), true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
 	}
