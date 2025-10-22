@@ -16,7 +16,6 @@ int main()
 	cout << "Ideal rate according to DAQ: " << rate << endl;
 
 	DataReciever r("10.10.10.10", 50007);
-	r.sendDouble(rate);
 
 
 	while (true) {
@@ -53,6 +52,7 @@ int main()
 			daq.drawLine(x1, y1, x2, y2, frequency, rate);
 
 		}
+		r.sendDouble(1.0); // Acknowledge receipt
 	}
 	return 0;
 
