@@ -7,6 +7,7 @@
 #include <vector>
 #include <unistd.h> // For usleep
 #include <sys/time.h>
+#include <cmath>
 
 using namespace std;
 #define CHANNEL 0
@@ -57,7 +58,7 @@ public:
 
     int analogScanOut_all_given_zipped_buffers(double* buffer, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
 
-    bool drawLine(double x1, double y1, double x2, double y2, int frequency, double rate);
+    bool drawLine(double x1, double y1, double x2, double y2, double speed, double rate);
 
     double getIdealRate(uint16_t num_iterations);
     double getIdealRate_all(uint16_t num_iterations);

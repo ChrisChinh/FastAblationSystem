@@ -147,20 +147,25 @@ double DAQControl::getIdealRate_hybrid(uint16_t num_iterations) {
    return (double)1e6 / avgTime;
 }
 
-bool DAQControl::drawLine(double x1, double y1, double x2, double y2, int frequency, double rate) {
-   int points_per_line = (int)(rate / frequency);
-   double dx = (x2 - x1) / points_per_line;
-   double dy = (y2 - y1) / points_per_line;
-   double* x_buf = new double[points_per_line];
-   double* y_buf = new double[points_per_line];
-   for (int i = 0; i < points_per_line; i++) {
-      x_buf[i] = x1 + i * dx;
-      y_buf[i] = y1 + i * dy;
+bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double speed, double rate) {
+   double microns_per_point = speed / rate;
+   double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+   if (round(length) < 1) return true;
+   int num_points = round(length) / microns_per_point;
+   if (num_points < 2) return false;
+   auto x_points = vector<double>(num_points);
+   auto y_points = vector<double>(num_points);
+   double x_step = (x2 - x1) / (num_points - 1);
+   double y_step = (y2 - y1) / (num_points - 1);
+   for (int i = 0; i < num_points; i++) {
+      x_points[i] = x1 + i * x_step;
+      y_points[i] = y1 + i * y_step;
    }
-   int result = analogScanOut_all_given_two_buffers(x_buf, y_buf, points_per_line, true, rate);
-   delete[] x_buf;
-   delete[] y_buf;
-   return result == 0;
+   for (int i = 0; i < num_points; i++) {
+      double voltages[2] = {x_points[i], y_points[i]};
+      setAnalogOut_all(voltages);
+   }
+   return true;
 }
 
 double DAQControl::getVoltage(uint8_t channel) {

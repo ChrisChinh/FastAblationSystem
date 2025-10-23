@@ -47,8 +47,8 @@ void ablateBuffer(double rate) {
 		}
 		
 		int bufferSize = cols;
-		int frequency = data[0][0]; // First element is frequency
-		cout << "Drawing " << (bufferSize - 1) << " lines at frequency " << frequency << " Hz." << endl;
+		int speed = data[0][0]; // First element is speed
+		cout << "Drawing " << (bufferSize - 1) << " lines at speed " << speed << " um/s." << endl;
 		for (int i = 1; i < bufferSize; i++) {
 			// Unpack the points for each line
 			double x1 = data[0][i];
@@ -66,7 +66,7 @@ void ablateBuffer(double rate) {
 				continue;
 			}
 			
-			daq.drawLine(x1, y1, x2, y2, frequency, rate);
+			daq.drawLine(x1, y1, x2, y2, speed, rate);
 
 		}
 		r.sendDouble(1.0); // Acknowledge receipt
