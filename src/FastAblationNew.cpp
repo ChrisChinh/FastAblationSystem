@@ -78,29 +78,34 @@ inline void repl(double rate) {
 	switch (command) {
 		case COMMAND_ABLATE_BUFFER:
 		{
+			cout << "Ablating buffer..." << endl;
 			r.sendDouble(1.0); // Acknowledge command receipt
-			ablateBuffer(rate);
+			//ablateBuffer(rate);
 			break;
 		}
 		case COMMAND_GET_RATE:
 		{
+			cout << "Sending ideal rate to client." << endl;
 			r.sendDouble(rate);
 			break;
 		}
 		case COMMAND_LASER_ON:
 		{
+			cout << "Turning laser on." << endl;
 			daq.setDigitalOut(0, true);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_LASER_OFF:
 		{
+			cout << "Turning laser off." << endl;
 			daq.setDigitalOut(0, false);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_GALVO_HOME:
 		{
+			cout << "Homing galvos." << endl;
 			daq.setAnalogOut(0, 0.0);
 			daq.setAnalogOut(1, 0.0);
 			r.sendDouble(1.0);
@@ -108,6 +113,7 @@ inline void repl(double rate) {
 		}
 		case COMMAND_SET_GALVO_X:
 		{
+			cout << "Setting galvo X position." << endl;
 			double x = r.receiveDouble();
 			daq.setAnalogOut(0, x);
 			r.sendDouble(1.0);
@@ -115,6 +121,7 @@ inline void repl(double rate) {
 		}
 		case COMMAND_SET_GALVO_Y:
 		{
+			cout << "Setting galvo Y position." << endl;
 			double y = r.receiveDouble();
 			daq.setAnalogOut(1, y);
 			r.sendDouble(1.0);
@@ -122,6 +129,7 @@ inline void repl(double rate) {
 		}
 		case COMMAND_GET_GALVO_POS:
 		{
+			cout << "Getting galvo positions." << endl;
 			double x = daq.getVoltage(0);
 			double y = daq.getVoltage(1);
 			r.sendDouble(x);
