@@ -142,7 +142,7 @@ inline void repl(double rate) {
 
 int main()
 {
-	double rate = daq.getIdealRate_all(60000);
+	double rate = 9300; //daq.getIdealRate_all(60000);
 	cout << "Ideal rate according to DAQ: " << rate << endl;
 	while (true) {
 		repl(rate);
