@@ -122,6 +122,7 @@ double DAQControl::getIdealRate(uint16_t num_iterations) {
 }
 
 double DAQControl::getIdealRate_all(uint16_t num_iterations) {
+   setDigitalOut(0, false);
    double both_high[2] = {5.0, 5.0};
    double both_low[2] = {0.0, 0.0};
    double time = getTimeinMicroseconds();
