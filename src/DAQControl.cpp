@@ -150,7 +150,7 @@ double DAQControl::getIdealRate_hybrid(uint16_t num_iterations) {
 bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double speed, double rate) {
    double microns_per_point = speed / rate;
    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-   int num_points = round(length) / microns_per_point;
+   int num_points = length / microns_per_point;
    if (num_points < 2) return false;
    auto x_points = vector<double>(num_points);
    auto y_points = vector<double>(num_points);
