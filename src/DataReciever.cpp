@@ -81,7 +81,17 @@ void DataReciever::sendDouble(double value) {
 
 int DataReciever::receiveInt() {
     int value;
-    recvAll(client_fd, &value, sizeof(value));
+    ssize_t r = recvAll(client_fd, &value, sizeof(value));
+    if (r <= 0) {
+        std::cerr << "Socket disconnected while receiving int, attempting to reconnect..." << std::endl;
+        if (reconnect() != 0) {
+            throw std::runtime_error("Reconnect failed");
+        }
+        r = recvAll(client_fd, &value, sizeof(value));
+        if (r <= 0) {
+            throw std::runtime_error("Failed to receive int after reconnect");
+        }
+    }
     return value;
 }
 
