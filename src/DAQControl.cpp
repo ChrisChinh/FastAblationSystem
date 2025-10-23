@@ -161,7 +161,6 @@ bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double spe
       y_points[i] = y1 + i * y_step;
    }
    for (int i = 0; i < num_points; i++) {
-      cout << "Setting voltages to (" << x_points[i] << ", " << y_points[i] << ")" << endl;
       double voltages[2] = {x_points[i], y_points[i]};
       setAnalogOut_all(voltages);
    }
