@@ -80,7 +80,8 @@ inline void repl(double rate) {
 		{
 			cout << "Ablating buffer..." << endl;
 			r.sendDouble(1.0); // Acknowledge command receipt
-			ablateBuffer(rate);
+			for (int i = 0; i < 100; i++)
+				ablateBuffer(rate);
 			break;
 		}
 		case COMMAND_GET_RATE:
