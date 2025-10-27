@@ -62,8 +62,10 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 }
 
 void GenerateSquareWave(int numSamples, double frequency, double* buffer) {
-	for (int i = 0; i < numSamples; i++) {
-		if (i % (int)(numSamples / frequency) == 0) {
+	uint16_t samplesPerCycle = (uint16_t)(numSamples / frequency);
+	for (uint16_t i = 0; i < numSamples; i++) {
+		uint16_t cycleIndex = i % samplesPerCycle;
+		if (cycleIndex > (samplesPerCycle / 2)) {
 			buffer[i] = 5.0;
 		}
 		else {
@@ -150,6 +152,7 @@ void two_triangles_test(){
 	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_550);
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
+		daq.analogScanOut_all_given_two_buffers(triangle_buffer_375, triangle_buffer_550, (uint16_t)rate, true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
 	}
