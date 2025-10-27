@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define CHANNEL 1
+#define CHANNEL 0
 
 #define FOREVER 1
 
@@ -158,6 +158,11 @@ void two_triangles_test(){
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
+void dc_voltage_test(){
+	daq.setAnalogOut(CHANNEL,1);
+	while(FOREVER);
+}
+
 void zipped_triangles_test(){
 	// setup
 	DAQControl daq = DAQControl("20BF9C2");
@@ -199,7 +204,7 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	two_triangles_test();
+	dc_voltage_test();
 	return 0;
 
 }
