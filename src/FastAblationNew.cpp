@@ -165,9 +165,9 @@ void dc_voltage_test(){
 	while(FOREVER);
 }
 
-void dc_voltage_test_2(){
+void square_wave_test(){
 	DAQControl daq = DAQControl("20BF9C2");
-	cout << "Starting dc wave test..." << endl;
+	cout << "Starting square wave test..." << endl;
 	auto start = daq.getTimeinMicroseconds();
 	uint16_t num_iterations = 60000;
 	double rate = daq.getIdealRate_all(num_iterations);
@@ -228,8 +228,7 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	// dc_voltage_test();
-	two_triangles_test();
+	square_wave_test();
 	return 0;
 
 }
