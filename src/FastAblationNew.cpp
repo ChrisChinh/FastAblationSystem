@@ -150,7 +150,6 @@ void two_triangles_test(){
 	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_550);
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
-		daq.analogScanOut_all_given_two_buffers(triangle_buffer_375, triangle_buffer_550, (uint16_t)rate, true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
 	}
@@ -180,8 +179,10 @@ void square_wave_test(){
 	GenerateSquareWave((uint16_t)rate, 360, square_wave_buffer_360);
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
+		daq.analogScanOut_all_given_two_buffers(square_wave_buffer_180, square_wave_buffer_360, (uint16_t)rate, true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
+		if(FOREVER) i--;
 	}
 
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
