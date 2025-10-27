@@ -61,7 +61,7 @@ void CreateOutputData(int numberOfSamplesPerChannel, int chanCount,double* buffe
 	}
 }
 
-void GenerateSquareWave(int numSamples, double* buffer, double frequency) {
+void GenerateSquareWave(int numSamples, double frequency, double* buffer) {
 	for (int i = 0; i < numSamples; i++) {
 		if (i % (int)(numSamples / frequency) == 0) {
 			buffer[i] = 5.0;
@@ -163,6 +163,28 @@ void dc_voltage_test(){
 	cout << "Starting DC voltage test..." << endl;
 	daq.setAnalogOut(CHANNEL,1);
 	while(FOREVER);
+}
+
+void dc_voltage_test_2(){
+	DAQControl daq = DAQControl("20BF9C2");
+	cout << "Starting dc wave test..." << endl;
+	auto start = daq.getTimeinMicroseconds();
+	uint16_t num_iterations = 60000;
+	double rate = daq.getIdealRate_all(num_iterations);
+	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
+	double square_wave_buffer_180[(uint16_t)rate];
+	double square_wave_buffer_360[(uint16_t)rate];
+	uint16_t totalTime = 0;
+
+	GenerateSquareWave((uint16_t)rate, 180, square_wave_buffer_180);
+	GenerateSquareWave((uint16_t)rate, 360, square_wave_buffer_360);
+	for (uint8_t i = 0; i < 100; i++) {
+		auto scanStart = daq.getTimeinMicroseconds();
+		auto scanEnd = daq.getTimeinMicroseconds();
+		totalTime += (scanEnd - scanStart);
+	}
+
+	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
 }
 
 void zipped_triangles_test(){
