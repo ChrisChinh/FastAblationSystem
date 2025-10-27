@@ -206,7 +206,8 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	dc_voltage_test();
+	// dc_voltage_test();
+	two_triangles_test();
 	return 0;
 
 }
