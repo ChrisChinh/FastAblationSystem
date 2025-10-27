@@ -11,6 +11,8 @@ using namespace std;
 
 #define CHANNEL 1
 
+#define FOREVER 1
+
 void test();
 
 // Controllers
@@ -138,7 +140,7 @@ void two_triangles_test(){
 	cout << "Starting triangle wave test..." << endl;
 	auto start = daq.getTimeinMicroseconds();
 	uint16_t num_iterations = 60000;
-	double rate = 10000; //daq.getIdealRate_all(num_iterations);
+	double rate = daq.getIdealRate_all(num_iterations);
 	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
 	double triangle_buffer_375[(uint16_t)rate];
 	double triangle_buffer_550[(uint16_t)rate];
@@ -183,6 +185,7 @@ void zipped_triangles_test(){
 		daq.analogScanOut_all_given_zipped_buffers(zipped_buffer, (uint16_t)rate, true, rate);
 		auto scanEnd = daq.getTimeinMicroseconds();
 		totalTime += (scanEnd - scanStart);
+		if(FOREVER) i--;
 	}
 
 	cout << "Total time taken: " << totalTime / (100 * 1000) << endl;
