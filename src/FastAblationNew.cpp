@@ -159,6 +159,8 @@ void two_triangles_test(){
 }
 
 void dc_voltage_test(){
+	DAQControl daq = DAQControl("20BF9C2");
+	cout << "Starting DC voltage test..." << endl;
 	daq.setAnalogOut(CHANNEL,1);
 	while(FOREVER);
 }
