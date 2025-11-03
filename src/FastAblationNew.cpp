@@ -59,6 +59,7 @@ void ablateBuffer(double rate) {
 			double y2 = data[3][i];
 			if (isinf(x1)){
 				if (signbit(x1)) {
+					cout << "Laser off command received." << endl;
 					daq.setDigitalOut(7, false); // Laser off
 				}
 				else {
