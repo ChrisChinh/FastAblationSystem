@@ -57,12 +57,12 @@ void ablateBuffer(double rate) {
 			double y2 = data[3][i];
 			if (x1 == INFINITY && y1 == INFINITY && x2 == INFINITY && y2 == INFINITY) {
 				//This means turn on the laser
-				daq.setDigitalOut(0, true);
+				daq.setDigitalOut(7, true);
 				continue;
 			}
 			else if (x1 == -INFINITY && y1 == -INFINITY && x2 == -INFINITY && y2 == -INFINITY) {
 				//This means turn off the laser
-				daq.setDigitalOut(0, false);
+				daq.setDigitalOut(7, false);
 				continue;
 			}
 			
@@ -92,14 +92,14 @@ inline void repl(double rate) {
 		case COMMAND_LASER_ON:
 		{
 			cout << "Turning laser on." << endl;
-			daq.setDigitalOut(0, true);
+			daq.setDigitalOut(7, true);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_LASER_OFF:
 		{
 			cout << "Turning laser off." << endl;
-			daq.setDigitalOut(0, false);
+			daq.setDigitalOut(7, false);
 			r.sendDouble(1.0);
 			break;
 		}
