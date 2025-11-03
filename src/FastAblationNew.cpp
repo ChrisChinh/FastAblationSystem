@@ -57,12 +57,15 @@ void ablateBuffer(double rate) {
 			double y1 = data[1][i];
 			double x2 = data[2][i];
 			double y2 = data[3][i];
+			cout << "Line " << (i) << ": (" << x1 << ", " << y1 << ") to (" << x2 << ", " << y2 << ")" << endl;
 			if (isinf(x1)){
+				cout << "Laser command received." << endl;
 				if (signbit(x1)) {
 					cout << "Laser off command received." << endl;
 					daq.setDigitalOut(7, false); // Laser off
 				}
 				else {
+					cout << "Laser on command received." << endl;
 					daq.setDigitalOut(7, true); // Laser on
 				}
 				continue;
