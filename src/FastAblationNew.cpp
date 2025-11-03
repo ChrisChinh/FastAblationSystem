@@ -43,6 +43,8 @@ void ablateBuffer(double rate) {
 
 		if (cols < 2) {
 			cout << "Expected at least 1 point and header information, but received " << cols << " columns." << endl;
+			cout << "Skipping ablation" << endl;
+			r.sendDouble(1.0);
 			return;
 		}
 		
