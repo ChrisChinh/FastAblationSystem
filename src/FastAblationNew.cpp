@@ -6,6 +6,8 @@
 #include "DAQControl.h"
 #include "DataReciever.h"
 #include <cmath>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -142,7 +144,7 @@ void two_triangles_test(){
 	cout << "Starting triangle wave test..." << endl;
 	auto start = daq.getTimeinMicroseconds();
 	uint16_t num_iterations = 60000;
-	double rate = daq.getIdealRate_all(num_iterations);
+	double rate = 9300;//daq.getIdealRate_all(num_iterations);
 	cout << "Ideal rate according to DAQ: " << rate << " with num iterations: " << num_iterations << endl;
 	double triangle_buffer_375[(uint16_t)rate];
 	double triangle_buffer_550[(uint16_t)rate];
@@ -150,6 +152,11 @@ void two_triangles_test(){
 
 	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_375);
 	GenerateTriangleWave((uint16_t)rate, 180, triangle_buffer_550);
+	double test_buffer[2] = {5, 5};
+	daq.setAnalogOut_all(test_buffer);
+	// Sleep for 3 seconds
+	std::this_thread::sleep_for(std::chrono::seconds(3));
+
 	for (uint8_t i = 0; i < 100; i++) {
 		auto scanStart = daq.getTimeinMicroseconds();
 		daq.analogScanOut_all_given_two_buffers(triangle_buffer_375, triangle_buffer_550, (uint16_t)rate, true, rate);
@@ -232,7 +239,8 @@ int main()
 	// 	auto data = r.receiveData();
 	// 	cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 	// }
-	square_wave_test();
+	//square_wave_test();
+	two_triangles_test();
 	return 0;
 
 }
