@@ -46,10 +46,21 @@ uint64_t DAQControl::getTimeinMicroseconds() {
 }
 
 int DAQControl::setAnalogOut(uint8_t channel, float voltage) {
+   if (channel == 0) {
+       voltage = voltage + chan0Bias;
+       chan0Voltage = voltage;
+   } else if (channel == 1) {
+       voltage = voltage + chan1Bias;
+       chan1Voltage = voltage; 
+   } else {
+       throw std::out_of_range("Invalid channel number");
+   }
 	return mcc152_a_out_write(address, channel, OPTIONS, voltage);
 }
 
 int DAQControl::setAnalogOut_all(double* voltages) {
+   voltages[0] += chan0Bias;
+   voltages[1] += chan1Bias;
    chan0Voltage = voltages[0];
    chan1Voltage = voltages[1];
    return mcc152_a_out_write_all(address, OPTIONS, voltages);
