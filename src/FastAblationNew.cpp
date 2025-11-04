@@ -8,6 +8,11 @@
 #include <cmath>
 using namespace std;
 
+#define LASER_PIN 7
+#define X_PIN 0
+#define Y_PIN 1
+#define IDEAL_RATE 9300 // Experimentally determined
+
 
 typedef enum {
 	COMMAND_ABLATE_BUFFER,
@@ -22,7 +27,7 @@ typedef enum {
 
 
 // Globals
-DAQControl daq = DAQControl("20BF9C2");
+DAQControl daq = DAQControl();
 DataReciever r("10.10.10.10", 50007);
 
 void ablateBuffer(double rate) {
@@ -62,15 +67,18 @@ void ablateBuffer(double rate) {
 				cout << "Laser command received." << endl;
 				if (signbit(x1)) {
 					cout << "Laser off command received." << endl;
-					daq.setDigitalOut(7, false); // Laser off
+					daq.setDigitalOut(LASER_PIN, false); // Laser off
 				}
 				else {
 					cout << "Laser on command received." << endl;
-					daq.setDigitalOut(7, true); // Laser on
+					daq.setDigitalOut(LASER_PIN, true); // Laser on
 				}
 				continue;
 			}
-			daq.drawLine(x1, y1, x2, y2, speed, rate);
+			if (X_PIN == 0)
+				daq.drawLine(x1, y1, x2, y2, speed, rate);
+			else
+				daq.drawLine(y1, x1, y2, x2, speed, rate);
 
 		}
 		r.sendDouble(1.0); // Acknowledge receipt
@@ -96,22 +104,22 @@ inline void repl(double rate) {
 		case COMMAND_LASER_ON:
 		{
 			cout << "Turning laser on." << endl;
-			daq.setDigitalOut(7, true);
+			daq.setDigitalOut(LASER_PIN, true);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_LASER_OFF:
 		{
 			cout << "Turning laser off." << endl;
-			daq.setDigitalOut(7, false);
+			daq.setDigitalOut(LASER_PIN, false);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_GALVO_HOME:
 		{
 			cout << "Homing galvos." << endl;
-			daq.setAnalogOut(0, 0.0);
-			daq.setAnalogOut(1, 0.0);
+			daq.setAnalogOut(X_PIN, 0.0);
+			daq.setAnalogOut(Y_PIN, 0.0);
 			r.sendDouble(1.0);
 			break;
 		}
@@ -119,7 +127,7 @@ inline void repl(double rate) {
 		{
 			cout << "Setting galvo X position." << endl;
 			double x = r.receiveDouble();
-			daq.setAnalogOut(0, x);
+			daq.setAnalogOut(X_PIN, x);
 			r.sendDouble(1.0);
 			break;
 		}
@@ -127,15 +135,15 @@ inline void repl(double rate) {
 		{
 			cout << "Setting galvo Y position." << endl;
 			double y = r.receiveDouble();
-			daq.setAnalogOut(1, y);
+			daq.setAnalogOut(Y_PIN, y);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_GET_GALVO_POS:
 		{
 			cout << "Getting galvo positions." << endl;
-			double x = daq.getVoltage(0);
-			double y = daq.getVoltage(1);
+			double x = daq.getVoltage(X_PIN);
+			double y = daq.getVoltage(Y_PIN);
 			r.sendDouble(x);
 			r.sendDouble(y);
 			break;
@@ -146,8 +154,15 @@ inline void repl(double rate) {
 
 int main()
 {
-	double rate = 9300; //daq.getIdealRate_all(60000);
-	cout << "Ideal rate according to DAQ: " << rate << endl;
+	double rate = IDEAL_RATE; //daq.getIdealRate_all(60000);
+
+	// Set initial biases
+	double x_bias = 2.5;
+	double y_bias = 2.5;
+	daq.setBias(X_PIN, x_bias);
+	daq.setBias(Y_PIN, y_bias);
+
+
 	while (true) {
 		repl(rate);
 	}

@@ -28,12 +28,16 @@ private:
 
     double chan0Voltage, chan1Voltage;
 
-    int portType;
+    double chan0Bias, chan1Bias;
+
+    // Scan an Analog output on both channels
+    int analogScanOut_all(vector<double*> voltage_pairs, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
+
 
 public:
     uint64_t getTimeinMicroseconds();
 
-    DAQControl(std::string unique_id);
+    DAQControl();
     ~DAQControl();
 
     // Set Analog Output voltage.
@@ -48,24 +52,14 @@ public:
     // Scan an Analog output
     int analogScanOut(uint8_t low_chan, vector<double> voltages, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
 
-    // Scan an Analog output on both channels
-    int analogScanOut_all(vector<double*> voltage_pairs, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
-
-    // Set an Analog output wby passing in a pair of buffers
-    int analogScanOut_all_given_two_buffers(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
-
-    int analogScanOut_all_given_two_buffers_zipped(double* buffer_1, double* buffer_2, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
-
-    int analogScanOut_all_given_zipped_buffers(double* buffer, uint16_t buffer_length, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
-
     bool drawLine(double x1, double y1, double x2, double y2, double speed, double rate);
 
     double getIdealRate(uint16_t num_iterations);
-    double getIdealRate_all(uint16_t num_iterations);
-    double getIdealRate_hybrid(uint16_t num_iterations);
 
     // Get current position of galvos
     double getVoltage(uint8_t channel);
+
+    void setBias(uint8_t channel, double bias);
 };
 
 #endif
