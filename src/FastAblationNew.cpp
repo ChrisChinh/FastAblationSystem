@@ -12,6 +12,7 @@ using namespace std;
 #define X_PIN 0
 #define Y_PIN 1
 #define IDEAL_RATE 9300 // Experimentally determined
+#define SOLENOID_PIN 4
 
 
 typedef enum {
@@ -22,7 +23,9 @@ typedef enum {
 	COMMAND_GALVO_HOME,
 	COMMAND_SET_GALVO_X,
 	COMMAND_SET_GALVO_Y,
-	COMMAND_GET_GALVO_POS
+	COMMAND_GET_GALVO_POS,
+	COMMAND_ENABLE_SOLENOID,
+	COMMAND_DISABLE_SOLENOID
 } CommandType;
 
 
@@ -125,7 +128,6 @@ inline void repl(double rate) {
 		}
 		case COMMAND_SET_GALVO_X:
 		{
-			cout << "Setting galvo X position." << endl;
 			double x = r.receiveDouble();
 			daq.setAnalogOut(X_PIN, x);
 			r.sendDouble(1.0);
@@ -133,7 +135,6 @@ inline void repl(double rate) {
 		}
 		case COMMAND_SET_GALVO_Y:
 		{
-			cout << "Setting galvo Y position." << endl;
 			double y = r.receiveDouble();
 			daq.setAnalogOut(Y_PIN, y);
 			r.sendDouble(1.0);
@@ -146,6 +147,21 @@ inline void repl(double rate) {
 			double y = daq.getVoltage(Y_PIN);
 			r.sendDouble(x);
 			r.sendDouble(y);
+			break;
+		}
+		case COMMAND_ENABLE_SOLENOID:
+		{
+			cout << "Enabling solenoid." << endl;
+			// Assuming solenoid is controlled via a digital output pin, e.g., pin 8
+			daq.setDigitalOut(SOLENOID_PIN, true);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_DISABLE_SOLENOID:
+		{
+			cout << "Disabling solenoid." << endl;
+			daq.setDigitalOut(SOLENOID_PIN, false);
+			r.sendDouble(1.0);
 			break;
 		}
 	}
