@@ -8,7 +8,7 @@
 #include <cmath>
 using namespace std;
 
-#define LASER_PIN 7
+#define LASER_PIN 6
 #define X_PIN 0
 #define Y_PIN 1
 #define IDEAL_RATE 9300 // Experimentally determined
