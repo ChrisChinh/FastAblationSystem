@@ -60,22 +60,17 @@ void ablateBuffer(double rate) {
 		
 		int bufferSize = cols;
 		int speed = data[0][0]; // First element is speed
-		cout << "Drawing " << (bufferSize - 1) << " lines at speed " << speed << " um/s." << endl;
 		for (int i = 1; i < bufferSize; i++) {
 			// Unpack the points for each line
 			double x1 = data[0][i];
 			double y1 = data[1][i];
 			double x2 = data[2][i];
 			double y2 = data[3][i];
-			cout << "Line " << (i) << ": (" << x1 << ", " << y1 << ") to (" << x2 << ", " << y2 << ")" << endl;
 			if (isinf(x1)){
-				cout << "Laser command received." << endl;
 				if (signbit(x1)) {
-					cout << "Laser off command received." << endl;
 					daq.setDigitalOut(LASER_PIN, false); // Laser off
 				}
 				else {
-					cout << "Laser on command received." << endl;
 					daq.setDigitalOut(LASER_PIN, true); // Laser on
 				}
 				continue;
@@ -95,34 +90,29 @@ inline void repl(double rate) {
 	switch (command) {
 		case COMMAND_ABLATE_BUFFER:
 		{
-			cout << "Ablating buffer..." << endl;
 			r.sendDouble(1.0); // Acknowledge command receipt
 			ablateBuffer(rate);
 			break;
 		}
 		case COMMAND_GET_RATE:
 		{
-			cout << "Sending ideal rate to client." << endl;
 			r.sendDouble(rate);
 			break;
 		}
 		case COMMAND_LASER_ON:
 		{
-			cout << "Turning laser on." << endl;
 			daq.setDigitalOut(LASER_PIN, true);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_LASER_OFF:
 		{
-			cout << "Turning laser off." << endl;
 			daq.setDigitalOut(LASER_PIN, false);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_GALVO_HOME:
 		{
-			cout << "Homing galvos." << endl;
 			daq.setAnalogOut(X_PIN, 0.0);
 			daq.setAnalogOut(Y_PIN, 0.0);
 			r.sendDouble(1.0);
@@ -144,7 +134,6 @@ inline void repl(double rate) {
 		}
 		case COMMAND_GET_GALVO_POS:
 		{
-			cout << "Getting galvo positions." << endl;
 			double x = daq.getVoltage(X_PIN);
 			double y = daq.getVoltage(Y_PIN);
 			r.sendDouble(x);
@@ -153,7 +142,6 @@ inline void repl(double rate) {
 		}
 		case COMMAND_ENABLE_SOLENOID:
 		{
-			cout << "Enabling solenoid." << endl;
 			// Assuming solenoid is controlled via a digital output pin, e.g., pin 8
 			daq.setDigitalOut(SOLENOID_PIN, true);
 			r.sendDouble(1.0);
@@ -161,7 +149,6 @@ inline void repl(double rate) {
 		}
 		case COMMAND_DISABLE_SOLENOID:
 		{
-			cout << "Disabling solenoid." << endl;
 			daq.setDigitalOut(SOLENOID_PIN, false);
 			r.sendDouble(1.0);
 			break;
