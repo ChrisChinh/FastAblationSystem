@@ -8,11 +8,13 @@
 #include <cmath>
 using namespace std;
 
-#define LASER_PIN 6
+#define LASER_PIN 7
 #define X_PIN 0
 #define Y_PIN 1
 #define IDEAL_RATE 9300 // Experimentally determined
 #define SOLENOID_PIN 4
+#define X_BIAS 0.0
+#define Y_BIAS 0.0
 
 
 typedef enum {
@@ -171,12 +173,8 @@ inline void repl(double rate) {
 int main()
 {
 	double rate = IDEAL_RATE; //daq.getIdealRate_all(60000);
-
-	// Set initial biases
-	double x_bias = 2.5;
-	double y_bias = 2.5;
-	daq.setBias(X_PIN, x_bias);
-	daq.setBias(Y_PIN, y_bias);
+	daq.setBias(X_PIN, X_BIAS);
+	daq.setBias(Y_PIN, Y_BIAS);
 
 
 	while (true) {
