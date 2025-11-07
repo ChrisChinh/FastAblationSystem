@@ -13,8 +13,8 @@ using namespace std;
 #define Y_PIN 1
 #define IDEAL_RATE 9300 // Experimentally determined
 #define SOLENOID_PIN 4
-#define X_BIAS 0.0
-#define Y_BIAS 0.0
+#define X_BIAS 2.5
+#define Y_BIAS 2.5
 
 
 typedef enum {
