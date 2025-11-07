@@ -44,7 +44,6 @@ void ablateBuffer(double rate) {
 		}
 		int rows = data.size();
 		int cols = data[0].size();
-		cout << "Received data with " << data.size() << " rows and " << data[0].size() << " columns." << endl;
 
 		if (rows != 4) {
 			cout << "Expected 4 rows of data (for 4 channels), but received " << rows << " rows." << endl;
@@ -52,14 +51,14 @@ void ablateBuffer(double rate) {
 		}
 
 		if (cols < 2) {
-			cout << "Expected at least 1 point and header information, but received " << cols << " columns." << endl;
-			cout << "Skipping ablation" << endl;
+			// Skip ablation if there are not enough points
 			r.sendDouble(1.0);
 			return;
 		}
 		
 		int bufferSize = cols;
 		int speed = data[0][0]; // First element is speed
+		cout << "Ablating buffer of size " << bufferSize << " at speed " << speed << " and rate " << rate << endl;
 		for (int i = 1; i < bufferSize; i++) {
 			// Unpack the points for each line
 			double x1 = data[0][i];
