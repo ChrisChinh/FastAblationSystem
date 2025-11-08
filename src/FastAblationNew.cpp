@@ -18,7 +18,7 @@ using namespace std;
 #define X_BIAS 2.5
 #define Y_BIAS 2.5
 #define WAIT_SIGNAL 200
-#define WAIT_PERIOD 200 // us
+#define WAIT_PERIOD 1000 // us
 
 
 typedef enum {
@@ -61,6 +61,7 @@ void ablateBuffer(double rate) {
 		
 		int bufferSize = cols;
 		int speed = data[0][0]; // First element is speed
+		cout << "Ablating buffer of size " << bufferSize << " at speed " << speed << " and rate " << rate << endl;
 		for (int i = 1; i < bufferSize; i++) {
 			// Unpack the points for each line
 			double x1 = data[0][i];
