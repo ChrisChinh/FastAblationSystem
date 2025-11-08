@@ -79,6 +79,7 @@ void ablateBuffer(double rate) {
 			else if (x1 == WAIT_SIGNAL) {
 				// Wait for a period
 				std::this_thread::sleep_for(std::chrono::microseconds(WAIT_PERIOD));
+				continue;
 			}
 			if (X_PIN == 0)
 				daq.drawLine(x1, y1, x2, y2, speed, rate);
