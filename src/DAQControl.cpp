@@ -105,8 +105,6 @@ bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double spe
    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
    int num_points = length / v_per_point;
    if (num_points < 2) {
-      double min_speed = (length * rate) / 4; // At least 4 points
-      this->drawLine(x1, y1, x2, y2, min_speed, rate);
       return false;
    }
    auto x_points = vector<double>(num_points);
