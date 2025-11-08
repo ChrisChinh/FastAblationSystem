@@ -6,6 +6,8 @@
 #include "DAQControl.h"
 #include "DataReciever.h"
 #include <cmath>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 #define LASER_PIN 7
