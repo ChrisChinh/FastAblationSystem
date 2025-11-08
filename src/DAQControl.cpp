@@ -105,6 +105,8 @@ bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double spe
    double length = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
    int num_points = length / v_per_point;
    if (num_points < 2) {
+      double voltages[2] = {x2, y2};
+      setAnalogOut_all(voltages);
       return false;
    }
    auto x_points = vector<double>(num_points);
