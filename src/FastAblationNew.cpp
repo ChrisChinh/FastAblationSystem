@@ -15,6 +15,8 @@ using namespace std;
 #define SOLENOID_PIN 4
 #define X_BIAS 2.5
 #define Y_BIAS 2.5
+#define WAIT_SIGNAL 200
+#define WAIT_PERIOD 200 // us
 
 
 typedef enum {
@@ -29,7 +31,6 @@ typedef enum {
 	COMMAND_ENABLE_SOLENOID,
 	COMMAND_DISABLE_SOLENOID
 } CommandType;
-
 
 // Globals
 DAQControl daq = DAQControl();
@@ -72,6 +73,10 @@ void ablateBuffer(double rate) {
 					daq.setDigitalOut(LASER_PIN, true); // Laser on
 				}
 				continue;
+			}
+			else if (x1 == WAIT_SIGNAL) {
+				// Wait for a period
+				std::this_thread::sleep_for(std::chrono::microseconds(WAIT_PERIOD));
 			}
 			if (X_PIN == 0)
 				daq.drawLine(x1, y1, x2, y2, speed, rate);
