@@ -6,8 +6,8 @@
 #include "DAQControl.h"
 #include "DataReciever.h"
 #include <cmath>
-#include <thread>
-#include <chrono>
+#include <time.h>
+#include <stdint.h>
 using namespace std;
 
 #define LASER_PIN 7
@@ -37,6 +37,21 @@ typedef enum {
 // Globals
 DAQControl daq = DAQControl();
 DataReciever r("10.10.10.10", 50007);
+
+static inline uint64_t nowNanos() {
+	timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (uint64_t)ts.tv_sec * 1000000000LL + (uint64_t)ts.tv_nsec;
+}
+
+inline void busy_wait_us(uint64_t microseconds) {
+	uint64_t start = nowNanos();
+	uint64_t end = start + microseconds * 1000;
+	while (nowNanos() < end) {
+		// Busy wait
+		asm volatile("pause" ::: "memory");
+	}
+}
 
 void ablateBuffer(double rate) {
 		auto data = r.receiveData();
@@ -79,7 +94,7 @@ void ablateBuffer(double rate) {
 			}
 			else if (x1 == WAIT_SIGNAL) {
 				// Wait for a period
-				std::this_thread::sleep_for(std::chrono::microseconds(WAIT_PERIOD));
+				busy_wait_us(WAIT_PERIOD);
 				continue;
 			}
 			if (X_PIN == 0)
