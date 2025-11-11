@@ -49,7 +49,7 @@ inline void busy_wait_us(uint64_t microseconds) {
 	uint64_t end = start + microseconds * 1000;
 	while (nowNanos() < end) {
 		// Busy wait
-		asm volatile("pause" ::: "memory");
+		asm volatile("" ::: "memory");
 	}
 }
 
