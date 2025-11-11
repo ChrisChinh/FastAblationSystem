@@ -18,7 +18,7 @@ using namespace std;
 #define X_BIAS 2.5
 #define Y_BIAS 2.5
 #define WAIT_SIGNAL 200
-#define WAIT_PERIOD 1000 // us
+#define WAIT_PERIOD 300 // us
 
 
 typedef enum {
