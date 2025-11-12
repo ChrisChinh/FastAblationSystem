@@ -94,8 +94,10 @@ void ablateBuffer(double rate) {
 			}
 			else if (x1 == WAIT_SIGNAL) {
 				// Wait for a period
-				cout << "Waiting for " << WAIT_PERIOD << " us" << endl;
-				busy_wait_us(WAIT_PERIOD);
+				double waitPeriod = x2; // us
+				if (isnan(waitPeriod)) waitPeriod = WAIT_PERIOD;
+				cout << "Waiting for " << waitPeriod << " us" << endl;
+				busy_wait_us(waitPeriod);
 				continue;
 			}
 			if (X_PIN == 0)
