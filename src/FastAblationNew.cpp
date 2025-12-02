@@ -31,7 +31,9 @@ typedef enum {
 	COMMAND_SET_GALVO_Y,
 	COMMAND_GET_GALVO_POS,
 	COMMAND_ENABLE_SOLENOID,
-	COMMAND_DISABLE_SOLENOID
+	COMMAND_DISABLE_SOLENOID,
+	COMMAND_BEGIN_CONTINOUS,
+	COMMAND_END_CONTINOUS
 } CommandType;
 
 // Globals
@@ -175,6 +177,22 @@ inline void repl(double rate) {
 		case COMMAND_DISABLE_SOLENOID:
 		{
 			daq.setDigitalOut(SOLENOID_PIN, false);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_BEGIN_CONTINOUS:
+		{
+			double f = r.receiveDouble();
+			double a = r.receiveDouble();
+			double c = r.receiveDouble();
+			auto pin = (c == 0) ? X_PIN : Y_PIN;
+			daq.startTriangleLoop(pin, a, f, rate);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_END_CONTINOUS:
+		{
+			daq.stopTriangleLoop();
 			r.sendDouble(1.0);
 			break;
 		}

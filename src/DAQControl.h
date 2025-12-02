@@ -8,6 +8,8 @@
 #include <unistd.h> // For usleep
 #include <sys/time.h>
 #include <cmath>
+#include <thread>
+#include <atomic>
 
 using namespace std;
 #define CHANNEL 0
@@ -32,6 +34,15 @@ private:
 
     // Scan an Analog output on both channels
     int analogScanOut_all(vector<double*> voltage_pairs, bool blocking = true, double rate = DEFAULT_SCAN_RATE);
+
+    // Generate triangle wave
+    vector<double> triangleWaveBuffer(int rate, double frequency, double amplitude);
+    void triangleWave(uint8_t channel, double amplitude, double frequency, double rate);
+
+    // Atomics for triangle wave thread
+    atomic<bool> triangleLoopStop_{false};
+    atomic<bool> triangleLoopRunning_{false};
+    thread triangleThread_;
 
 
 public:
@@ -60,6 +71,12 @@ public:
     double getVoltage(uint8_t channel);
 
     void setBias(uint8_t channel, double bias);
+
+    // Triangle wave
+    void startTriangleLoop(uint8_t channel, double amplitude, double frequency, double rate);
+    void stopTriangleLoop();
+    bool isTriangleLoopRunning() const;
+
 };
 
 #endif

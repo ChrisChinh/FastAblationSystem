@@ -143,3 +143,58 @@ void DAQControl::setBias(uint8_t channel, double bias) {
        throw std::out_of_range("Invalid channel number");
    }
 }
+
+void DAQControl::triangleWave(uint8_t channel, double amplitude, double frequency, double rate) {
+
+   vector<double> buffer = triangleWaveBuffer((int)rate, frequency, amplitude);
+   analogScanOut(channel, buffer, false, rate);
+
+}
+
+vector<double> DAQControl::triangleWaveBuffer(int rate, double frequency, double amplitude) {
+   vector<double> buffer(rate);
+   double min = 0.0;
+   double max = amplitude;
+   double range = max - min;
+   double samplesPerPeriod = rate / frequency;
+
+   for (int i = 0; i < rate; i++) {
+      int phase_index = i % (int)samplesPerPeriod;
+      if (phase_index < samplesPerPeriod / 2) {
+         buffer[i] = min + (phase_index * range / (samplesPerPeriod / 2));
+      } else {
+         buffer[i] = max - ((phase_index - samplesPerPeriod / 2) * range / (samplesPerPeriod / 2));
+      }
+   }
+
+   return buffer;
+}
+
+void DAQControl::startTriangleLoop(uint8_t channel, double amplitude, double frequency, double rate) {
+   if (triangleLoopRunning_) {
+      return;
+   }
+   triangleLoopStop_ = false;
+   triangleLoopRunning_ = true;
+   triangleThread_ = thread([=]() {
+      while (!triangleLoopStop_) {
+         triangleWave(channel, amplitude, frequency, rate);
+         this_thread::yield();
+      }
+      triangleLoopRunning_ = false;
+   });
+}
+
+void DAQControl::stopTriangleLoop() {
+   if (!triangleLoopRunning_) {
+      return;
+   }
+   triangleLoopStop_ = true;
+   if (triangleThread_.joinable()) {
+      triangleThread_.join();
+   }
+}
+
+bool DAQControl::isTriangleLoopRunning() const {
+   return triangleLoopRunning_;
+}
