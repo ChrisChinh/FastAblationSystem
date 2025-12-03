@@ -153,8 +153,9 @@ void DAQControl::triangleWave(uint8_t channel, double amplitude, double frequenc
 
 vector<double> DAQControl::triangleWaveBuffer(int rate, double frequency, double amplitude) {
    vector<double> buffer(rate);
-   double min = 0.0;
-   double max = amplitude;
+   double bias = chan0Bias;
+   double min = bias - amplitude;
+   double max = bias + amplitude;
    double range = max - min;
    double samplesPerPeriod = rate / frequency;
 

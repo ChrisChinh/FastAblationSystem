@@ -186,12 +186,14 @@ inline void repl(double rate) {
 			double a = r.receiveDouble();
 			double c = r.receiveDouble();
 			auto pin = (c == 0) ? X_PIN : Y_PIN;
+			cout << "Starting continuous triangle wave on pin " << pin << " with freq " << f << " amplitude " << a << endl;
 			daq.startTriangleLoop(pin, a, f, rate);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_END_CONTINOUS:
 		{
+			cout << "Stopping continuous triangle wave" << endl;
 			daq.stopTriangleLoop();
 			r.sendDouble(1.0);
 			break;
