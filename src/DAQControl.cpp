@@ -153,9 +153,8 @@ void DAQControl::triangleWave(uint8_t channel, double amplitude, double frequenc
 
 vector<double> DAQControl::triangleWaveBuffer(int rate, double frequency, double amplitude) {
    vector<double> buffer(rate);
-   double bias = chan0Bias;
-   double min = bias - amplitude / 2.0;
-   double max = bias + amplitude / 2.0;
+   double min =  amplitude / 2.0;
+   double max = - amplitude / 2.0;
    double range = max - min;
    double samplesPerPeriod = rate / frequency;
 
@@ -193,10 +192,8 @@ void DAQControl::stopTriangleLoop() {
    if (triangleThread_.joinable()) {
       triangleThread_.join();
    }
-   chan0Voltage = chan0Bias;
-   chan1Voltage = chan1Bias;
-   double voltages[2] = {chan0Voltage, chan1Voltage};
-   setAnalogOut_all(voltages);
+   setAnalogOut(0, 0);
+   setAnalogOut(1, 0);
    
 }
 
