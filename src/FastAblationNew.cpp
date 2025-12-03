@@ -16,7 +16,7 @@ using namespace std;
 #define IDEAL_RATE 9300 // Experimentally determined
 #define SOLENOID_PIN 4
 #define X_BIAS 2.5
-#define Y_BIAS 2.5
+#define Y_BIAS (2.5 + 0.4861)
 #define WAIT_SIGNAL 200
 #define WAIT_PERIOD 3000 // us
 
