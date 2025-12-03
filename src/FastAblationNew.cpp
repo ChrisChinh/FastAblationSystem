@@ -140,6 +140,7 @@ inline void repl(double rate) {
 		}
 		case COMMAND_GALVO_HOME:
 		{
+			daq.stopTriangleLoop();
 			daq.setAnalogOut(X_PIN, 0.0);
 			daq.setAnalogOut(Y_PIN, 0.0);
 			r.sendDouble(1.0);
