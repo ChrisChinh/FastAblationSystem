@@ -164,7 +164,6 @@ inline void repl(double rate) {
 		{
 			double x = daq.getVoltage(X_PIN);
 			double y = daq.getVoltage(Y_PIN);
-			cout << "Galvo positions - X: " << x << " Y: " << y << endl;
 			r.sendDouble(x);
 			r.sendDouble(y);
 			break;
