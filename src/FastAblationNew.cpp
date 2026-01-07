@@ -10,6 +10,9 @@
 #include <stdint.h>
 using namespace std;
 
+// #define _SAS_ // Uncomment this line to compile for SAS setup
+
+#ifdef _SAS_
 #define LASER_PIN 7
 #define X_PIN 0
 #define Y_PIN 1
@@ -19,6 +22,19 @@ using namespace std;
 #define Y_BIAS (2.5 + 0.4861)
 #define WAIT_SIGNAL 200
 #define WAIT_PERIOD 3000 // us
+
+
+#else
+#define LASER_PIN 4
+#define X_PIN 0
+#define Y_PIN 1
+#define IDEAL_RATE 9300 // Experimentally determined
+#define SOLENOID_PIN 3
+#define X_BIAS (2.5 - 0.2778)
+#define Y_BIAS (2.5 - 0.3125)
+#define WAIT_SIGNAL 200
+#define WAIT_PERIOD 3000 // us
+#endif
 
 
 typedef enum {
