@@ -126,8 +126,14 @@ bool DAQControl::drawLine(double x1, double y1, double x2, double y2, double spe
 
 double DAQControl::getVoltage(uint8_t channel) {
    if (channel == 0) {
+      cout << "Raw voltage" << chan0Voltage << endl;
+      cout << "Bias" << chan0Bias << endl;
+      cout << "Chan 0 voltage: " << chan0Voltage - chan0Bias << endl;
        return chan0Voltage - chan0Bias;
    } else if (channel == 1) {
+      cout << "Raw voltage" << chan1Voltage << endl;
+      cout << "Bias" << chan1Bias << endl;
+       cout << "Chan 1 voltage: " << chan1Voltage - chan1Bias << endl;
        return chan1Voltage - chan1Bias;
    } else {
        throw std::out_of_range("Invalid channel number");
