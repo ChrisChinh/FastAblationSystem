@@ -2,197 +2,219 @@
 //
 
 #include <iostream>
-#include <Windows.h>
-#include "StageControl.h"
-#include "LaserControl.h"
-#include "GalvoControl.h"
-#include "../MetalMesh.h"
-#include <wchar.h>
-#include <string>
-#include "KeyboardControl.h"
-#include "ConfocalWrapper.h"
-
-
+#include <stdint.h>
+#include "DAQControl.h"
+#include "DataReciever.h"
+#include <cmath>
+#include <time.h>
+#include <stdint.h>
 using namespace std;
 
-void test();
-
-// Controllers
-LaserControl laser = LaserControl();
-GalvoControl galvo = GalvoControl();
-StageControl stage = StageControl();
-ConfocalWrapper confocal = ConfocalWrapper(stage);
-
-// Experiments
-MetalMesh mesh = MetalMesh(stage, galvo, laser, confocal);
-
+#define LASER_PIN 7
+#define X_PIN 0
+#define Y_PIN 1
+#define IDEAL_RATE 9300 // Experimentally determined
+#define SOLENOID_PIN 4
+#define X_BIAS 2.5
+#define Y_BIAS (2.5 + 0.4861)
+#define WAIT_SIGNAL 200
+#define WAIT_PERIOD 3000 // us
 
 
-enum string_code {
-	HELP,
-	QUIT,
-	EXPERIMENT,
-	KEYBOARD,
-	INVALID,
-	TEST,
-	LASER,
-	CONFOCAL,
-	LASER_PREP
-};
+typedef enum {
+	COMMAND_ABLATE_BUFFER,
+	COMMAND_GET_RATE,
+	COMMAND_LASER_ON,
+	COMMAND_LASER_OFF,
+	COMMAND_GALVO_HOME,
+	COMMAND_SET_GALVO_X,
+	COMMAND_SET_GALVO_Y,
+	COMMAND_GET_GALVO_POS,
+	COMMAND_ENABLE_SOLENOID,
+	COMMAND_DISABLE_SOLENOID,
+	COMMAND_BEGIN_CONTINOUS,
+	COMMAND_END_CONTINOUS
+} CommandType;
 
-string_code hash_string(string const& inString) {
-	if (inString == "h") return HELP;
-	if (inString == "q") return QUIT;
-	if (inString == "e") return EXPERIMENT;
-	if (inString == "k") return KEYBOARD;
-	if (inString == "t") return TEST;
-	if (inString == "l") return LASER;
-	if (inString == "c") return CONFOCAL;
-	if (inString == "lp") return LASER_PREP;
-	return INVALID;
+// Globals
+DAQControl daq = DAQControl();
+DataReciever r("10.10.10.10", 50007);
+
+static inline uint64_t nowNanos() {
+	timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (uint64_t)ts.tv_sec * 1000000000LL + (uint64_t)ts.tv_nsec;
 }
 
-int main() {
-	galvo.openShutter();
-	laser.setVoltage(0.0);
-	laser.closeGate();
-	while (true) {
-		cout << "Command (h for help): ";
-		string command = "";
-		cin >> command;
-		switch (hash_string(command)) {
-		case HELP:
-			cout << "h: Help" << endl;
-			cout << "q: Quit" << endl;
-			cout << "e: Experiment (run an experiment)" << endl;
-			cout << "k: Keyboard (run keyboard control)" << endl;
-			cout << "t: Test (run test code)" << endl;
-			cout << "l: Laser (set laser voltage)" << endl;
-			cout << "lp: Laser prep" << endl;
-			break;
+inline void busy_wait_us(uint64_t microseconds) {
+	uint64_t start = nowNanos();
+	uint64_t end = start + microseconds * 1000;
+	while (nowNanos() < end) {
+		// Busy wait
+		asm volatile("" ::: "memory");
+	}
+}
 
-		case QUIT:
-			return 0;
+void ablateBuffer(double rate) {
+		auto data = r.receiveData();
+		if (data.size() == 0) {
+			cout << "No data received, reconnecting..." << endl;
+			r.reconnect();
+			return;
+		}
+		int rows = data.size();
+		int cols = data[0].size();
 
-		case EXPERIMENT:
-			cout << "Enter which experiment to run: " << endl;
-			cout << "1: Metal mesh" << endl;
-			cout << "b: Back" << endl;
-			cout << ">> ";
-			char exp;
-			cin >> exp;
-			switch (exp) {
-			case '1':
-				laser.setVoltage(0.6);
-				laser.openGate();
-				mesh.setParameter("voltage", 1.05);
-				cout << "enter the kerf: ";
-				double kerf;
-				cin >> kerf;
-				mesh.setParameter("kerf", kerf);
-				mesh.setParameter("square_length", 37.77);
-				mesh.setParameter("square_width", 10.56);
-				mesh.setParameter("num_units", 6);
-				mesh.setParameter("crosses", 1);
-				mesh.setParameter("period", 56.199);
-				mesh.setParameter("aperture", 1);
-				mesh.setParameter("circle_aperture", 0);
-				mesh.setParameter("use_confocal", 0);
-				mesh.run();
-				galvo.home();
-				laser.setVoltage(0.6);
-				laser.openGate();
-				break;
-			case 'b':
-				break;
-			}
-			break;
-
-		case KEYBOARD:
-			cout << "You can now use keyboard for control, press C to exit" << endl;
-			keyboard(galvo, stage);
-			break;
-
-		case LASER_PREP:
-			laser.setVoltage(0.6);
-			laser.openGate();
-			galvo.openShutter();
-			break;
-
-		case TEST:
-			cout << "running test code" << endl;
-			test();
-			break;
-
-		case LASER:
-			cout << "Enter new voltage: ";
-			double voltage;
-			cin >> voltage;
-			laser.setVoltage(voltage);
-			cout << "Enter laser state (0 for off, 1 for on): ";
-			int state;
-			cin >> state;
-			if (state == 0) laser.closeGate();
-			else if (state == 1) laser.openGate();
-			else cout << "Invalid state" << endl;
-			break;
-
-		case CONFOCAL:
-			cout << " Enter a confocal command: " << endl;
-			cout << "f : Set focus depth" << endl;
-			cout << "m : Move effector" << endl;
-			cout << "r : Move to focus" << endl;
-			cout << "b: Back" << endl;
-			cout << ">> ";
-			char confocal_command;
-			cin >> confocal_command;
-			if (confocal_command == 'f') {
-				confocal.moveEffector("c2l");
-				confocal.setFocusDepth();
-				confocal.moveEffector("l2c");
-			}
-			else if (confocal_command == 'm') {
-				cout << "Enter direction (c2l or l2c): ";
-				string direction;
-				cin >> direction;
-				confocal.moveEffector(direction);
-			}
-			else if (confocal_command == 'r') {
-				confocal.setState(ConfocalWrapper::LIVE_SCAN);
-				confocal.findFocus();
-			}
-			else if (confocal_command == 'b') {
-				break;
-			}
-			else {
-				cout << "Invalid command" << endl;
-			}
-			break;
-
-		default:
-			cout << "Invalid command" << endl;
-			break;
+		if (rows != 4) {
+			cout << "Expected 4 rows of data (for 4 channels), but received " << rows << " rows." << endl;
+			return;
 		}
 
-	}
-	return 0;
+		if (cols < 2) {
+			// Skip ablation if there are not enough points
+			r.sendDouble(1.0);
+			return;
+		}
+		
+		int bufferSize = cols;
+		int speed = data[0][0]; // First element is speed
+		cout << "Ablating buffer of size " << bufferSize << " at speed " << speed << " and rate " << rate << endl;
+		for (int i = 1; i < bufferSize; i++) {
+			// Unpack the points for each line
+			double x1 = data[0][i];
+			double y1 = data[1][i];
+			double x2 = data[2][i];
+			double y2 = data[3][i];
+			if (isinf(x1)){
+				if (signbit(x1)) {
+					daq.setDigitalOut(LASER_PIN, false); // Laser off
+				}
+				else {
+					daq.setDigitalOut(LASER_PIN, true); // Laser on
+				}
+				continue;
+			}
+			else if (x1 == WAIT_SIGNAL) {
+				// Wait for a period
+				double waitPeriod = x2; // us
+				if (isnan(waitPeriod)) waitPeriod = WAIT_PERIOD;
+				cout << "Waiting for " << waitPeriod << " us" << endl;
+				busy_wait_us(waitPeriod);
+				continue;
+			}
+			if (X_PIN == 0)
+				daq.drawLine(x1, y1, x2, y2, speed, rate);
+			else
+				daq.drawLine(y1, x1, y2, x2, speed, rate);
+
+		}
+		r.sendDouble(1.0); // Acknowledge receipt
 }
 
 
+inline void repl(double rate) {
+	CommandType command = (CommandType)r.receiveInt();
+	switch (command) {
+		case COMMAND_ABLATE_BUFFER:
+		{
+			r.sendDouble(1.0); // Acknowledge command receipt
+			ablateBuffer(rate);
+			break;
+		}
+		case COMMAND_GET_RATE:
+		{
+			r.sendDouble(rate);
+			break;
+		}
+		case COMMAND_LASER_ON:
+		{
+			daq.setDigitalOut(LASER_PIN, true);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_LASER_OFF:
+		{
+			daq.setDigitalOut(LASER_PIN, false);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_GALVO_HOME:
+		{
+			daq.stopTriangleLoop();
+			daq.setAnalogOut(X_PIN, 0.0);
+			daq.setAnalogOut(Y_PIN, 0.0);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_SET_GALVO_X:
+		{
+			double x = r.receiveDouble();
+			daq.setAnalogOut(X_PIN, x);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_SET_GALVO_Y:
+		{
+			double y = r.receiveDouble();
+			daq.setAnalogOut(Y_PIN, y);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_GET_GALVO_POS:
+		{
+			double x = daq.getVoltage(X_PIN);
+			double y = daq.getVoltage(Y_PIN);
+			r.sendDouble(x);
+			r.sendDouble(y);
+			break;
+		}
+		case COMMAND_ENABLE_SOLENOID:
+		{
+			// Assuming solenoid is controlled via a digital output pin, e.g., pin 8
+			daq.setDigitalOut(SOLENOID_PIN, true);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_DISABLE_SOLENOID:
+		{
+			daq.setDigitalOut(SOLENOID_PIN, false);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_BEGIN_CONTINOUS:
+		{
+			double f = r.receiveDouble();
+			double a = r.receiveDouble();
+			double c = r.receiveDouble();
+			auto pin = (c == 0) ? X_PIN : Y_PIN;
+			cout << "Starting continuous triangle wave on pin " << pin << " with freq " << f << " amplitude " << a << endl;
+			daq.startTriangleLoop(pin, a, f, rate);
+			daq.setDigitalOut(LASER_PIN, true);
+			r.sendDouble(1.0);
+			break;
+		}
+		case COMMAND_END_CONTINOUS:
+		{
+			cout << "Stopping continuous triangle wave" << endl;
+			daq.setDigitalOut(LASER_PIN, false);
+			daq.stopTriangleLoop();
+			r.sendDouble(1.0);
+			break;
+		}
+	}
 
-void test() {
-	/*
-	MetalMesh mesh = MetalMesh(stage, galvo, laser);
-	laser.closeGate();
-	laser.setVoltage(1.05);
-	mesh.setParameter("voltage", 1.05);
-	double kerf = 10;
-	cin >> kerf;
-	mesh.setParameter("kerf", kerf);
-	mesh.setParameter("square_length", 100);
-	mesh.setParameter("square_width", 30);
-	mesh.setParameter("num_units", 8);
-	mesh.setParameter("crosses", 1);
-	mesh.raster(300);
-	galvo.home();*/
+}
+
+int main()
+{
+	double rate = IDEAL_RATE; //daq.getIdealRate_all(60000);
+	daq.setBias(X_PIN, X_BIAS);
+	daq.setBias(Y_PIN, Y_BIAS);
+
+
+	while (true) {
+		repl(rate);
+	}
+	return 0;
+
 }
