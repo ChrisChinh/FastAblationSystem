@@ -10,7 +10,7 @@
 #include <stdint.h>
 using namespace std;
 
-// #define _SAS_ // Uncomment this line to compile for SAS setup
+#define _SAS_ // Uncomment this line to compile for SAS setup
 
 #ifdef _SAS_
 #define LASER_PIN 7
@@ -22,6 +22,7 @@ using namespace std;
 #define Y_BIAS (2.5 + 0.4861)
 #define WAIT_SIGNAL 200
 #define WAIT_PERIOD 3000 // us
+#define POWER_CHANNEL 0
 
 
 #else
@@ -49,11 +50,13 @@ typedef enum {
 	COMMAND_ENABLE_SOLENOID,
 	COMMAND_DISABLE_SOLENOID,
 	COMMAND_BEGIN_CONTINOUS,
-	COMMAND_END_CONTINOUS
+	COMMAND_END_CONTINOUS,
+	COMMAND_SET_VOLTAGE
 } CommandType;
 
 // Globals
-DAQControl daq = DAQControl();
+DAQControl daq = DAQControl(1);
+DAQControl powerDaq = DAQControl(0);
 DataReciever r("10.10.10.10", 50007);
 
 static inline uint64_t nowNanos() {
@@ -216,6 +219,17 @@ inline void repl(double rate) {
 			daq.stopTriangleLoop();
 			r.sendDouble(1.0);
 			break;
+		}
+		case COMMAND_SET_VOLTAGE:
+		{
+			double power = r.receiveDouble();
+			if (power > 5.0 || power < 0.0) {
+				r.sendDouble(-1.0); // Error
+			}
+			else {
+				powerDaq.setAnalogOut(POWER_CHANNEL, power); // Assuming power control is on channel 0
+				r.sendDouble(1.0); // Acknowledge
+			}
 		}
 	}
 

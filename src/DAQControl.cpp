@@ -2,18 +2,19 @@
 #define MAX_DEVICES 100
 #define DEFAULT_RANGE BIP10VOLTS
 
-DAQControl::DAQControl() {
+DAQControl::DAQControl(uint8_t addr) {
    chan0Voltage = 0.0;
    chan1Voltage = 0.0;
    chan0Bias = 0.0;
    chan1Bias = 0.0;
    char options_str[256];
    convert_options_to_string(OPTIONS, options_str);
-   select_hat_device(HAT_ID_MCC_152, &address);
+   address = addr;
+   // select_hat_device(HAT_ID_MCC_152, &address);
 
    printf("Using HAT device with address %d\n", address);
 
-   int result = mcc152_open(address);
+   int result = mcc152_open(address); 
    if (result != RESULT_SUCCESS) {
 	   print_error(result);
 	   exit(-1);

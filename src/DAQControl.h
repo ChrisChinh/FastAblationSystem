@@ -48,7 +48,7 @@ private:
 public:
     uint64_t getTimeinMicroseconds();
 
-    DAQControl();
+    DAQControl(uint8_t addr = 0);
     ~DAQControl();
 
     // Set Analog Output voltage.
