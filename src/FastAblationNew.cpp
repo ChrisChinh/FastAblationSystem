@@ -57,6 +57,7 @@ typedef enum {
 // Globals
 DAQControl daq = DAQControl(1);
 DAQControl powerDaq = DAQControl(0);
+double currentVoltage = 0;
 DataReciever r("10.10.10.10", 50007);
 
 static inline uint64_t nowNanos() {
@@ -106,10 +107,12 @@ void ablateBuffer(double rate) {
 			double y2 = data[3][i];
 			if (isinf(x1)){
 				if (signbit(x1)) {
-					daq.setDigitalOut(LASER_PIN, false); // Laser off
+					// daq.setDigitalOut(LASER_PIN, false); // Laser off
+					powerDaq.setAnalogOut(POWER_CHANNEL, 0.0); // Ensure power is off
 				}
 				else {
-					daq.setDigitalOut(LASER_PIN, true); // Laser on
+					// daq.setDigitalOut(LASER_PIN, true); // Laser on
+					powerDaq.setAnalogOut(POWER_CHANNEL, currentVoltage); // Restore power
 				}
 				continue;
 			}
@@ -147,13 +150,13 @@ inline void repl(double rate) {
 		}
 		case COMMAND_LASER_ON:
 		{
-			daq.setDigitalOut(LASER_PIN, true);
+			powerDaq.setAnalogOut(POWER_CHANNEL, currentVoltage);
 			r.sendDouble(1.0);
 			break;
 		}
 		case COMMAND_LASER_OFF:
 		{
-			daq.setDigitalOut(LASER_PIN, false);
+			powerDaq.setAnalogOut(POWER_CHANNEL, 0.0);
 			r.sendDouble(1.0);
 			break;
 		}
@@ -228,6 +231,7 @@ inline void repl(double rate) {
 			}
 			else {
 				powerDaq.setAnalogOut(POWER_CHANNEL, power); // Assuming power control is on channel 0
+				currentVoltage = power;
 				r.sendDouble(1.0); // Acknowledge
 			}
 		}
